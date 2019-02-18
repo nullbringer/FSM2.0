@@ -1,23 +1,13 @@
 package edu.buffalo.cse.jive.finiteStateMachine.views;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -60,7 +50,6 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.InputFileParser;
 import edu.buffalo.cse.jive.finiteStateMachine.models.TransitionBuilder;
 import edu.buffalo.cse.jive.finiteStateMachine.monitor.Monitor;
 import edu.buffalo.cse.jive.finiteStateMachine.monitor.OfflineMonitor;
-import edu.buffalo.cse.jive.finiteStateMachine.monitor.OnlineMonitor;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.Parser;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.ParserImpl;
 import net.sourceforge.plantuml.SourceStringReader;
@@ -80,8 +69,8 @@ public class FiniteStateMachine extends ViewPart {
 	private Text fileText;
 	private Combo attributeList;
 	private Button browseButton;
-	private Button listenButton;
-	private Button stopButton;
+//	private Button listenButton;
+//	private Button stopButton;
 	private Button buildButton;
 	private Button exportButton;
 	Composite imageComposite;
@@ -337,10 +326,10 @@ public class FiniteStateMachine extends ViewPart {
 		});
 	}
 
-	private List<String> readAttributes(Text attributes, Text abbreviations) {
-		List<String> keyAttributes;
+	private Set<String> readAttributes(Text attributes, Text abbreviations) {
+		Set<String> keyAttributes;
 		if (attributes != null && attributes.getText().length() > 0) {
-			keyAttributes = new ArrayList<String>();
+			keyAttributes = new LinkedHashSet<String>();
 			String selected = attributes.getText();
 			for (String attribute : selected.split(",")) {
 				keyAttributes.add(attribute.trim());
@@ -398,73 +387,73 @@ public class FiniteStateMachine extends ViewPart {
 		}
 	}
 
-	private void listenButtonAction(SelectionEvent e) {
-		this.online = true;
-		this.incomingStates = new LinkedBlockingQueue<Event>();
-		Job job = new Job("MonitorPortJob") {
-			ServerSocket server;
-			Socket socket;
-
-			protected IStatus run(IProgressMonitor monitor) {
-				String line = "";
-				try {
-					server = new ServerSocket(5000);
-					System.out.println("Server started at port 5000");
-
-					socket = server.accept();
-					System.out.println("Client accepted");
-					DataInputStream in = new DataInputStream(new BufferedInputStream(socket.getInputStream(), 131072));
-					while (true) {
-						try {
-							if (in.available() > 0) {
-								incomingStates.put(getEvent(in.readUTF().replace("\"", "").trim()));
-							}
-						} catch (IOException | InterruptedException e) {
-							System.out.println("Job Stopped");
-							break;
-						}
-					}
-					socket.close();
-					server.close();
-					updateUI("Socket: Client Disconnected");
-
-				} catch (EOFException eofe) {
-					System.out.println(line);
-					updateUI("Error:Reached end-of-file");
-					System.out.println("Reached end-of-file");
-				} catch (IOException ioe) {
-					System.out.println("Connection problem");
-					updateUI("Error:Connection problem");
-					System.out.println(line);
-				}
-				return Status.OK_STATUS;
-			}
-
-			@Override
-			protected void canceling() {
-				super.canceling();
-				try {
-					System.out.println("Server Closed");
-					if (socket != null)
-						socket.close();
-					if (server != null)
-						server.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-			@Override
-			public boolean belongsTo(Object family) {
-				return family.equals("MonitorPortJob");
-			}
-		};
-		job.setUser(true);
-		job.schedule();
-		this.monitor = new OnlineMonitor(readAttributes(kvText, paText), incomingStates);
-		Thread thread = new Thread(this.monitor);
-		thread.start();
-	}
+//	private void listenButtonAction(SelectionEvent e) {
+//		this.online = true;
+//		this.incomingStates = new LinkedBlockingQueue<Event>();
+//		Job job = new Job("MonitorPortJob") {
+//			ServerSocket server;
+//			Socket socket;
+//
+//			protected IStatus run(IProgressMonitor monitor) {
+//				String line = "";
+//				try {
+//					server = new ServerSocket(5000);
+//					System.out.println("Server started at port 5000");
+//
+//					socket = server.accept();
+//					System.out.println("Client accepted");
+//					DataInputStream in = new DataInputStream(new BufferedInputStream(socket.getInputStream(), 131072));
+//					while (true) {
+//						try {
+//							if (in.available() > 0) {
+//								incomingStates.put(getEvent(in.readUTF().replace("\"", "").trim()));
+//							}
+//						} catch (IOException | InterruptedException e) {
+//							System.out.println("Job Stopped");
+//							break;
+//						}
+//					}
+//					socket.close();
+//					server.close();
+//					updateUI("Socket: Client Disconnected");
+//
+//				} catch (EOFException eofe) {
+//					System.out.println(line);
+//					updateUI("Error:Reached end-of-file");
+//					System.out.println("Reached end-of-file");
+//				} catch (IOException ioe) {
+//					System.out.println("Connection problem");
+//					updateUI("Error:Connection problem");
+//					System.out.println(line);
+//				}
+//				return Status.OK_STATUS;
+//			}
+//
+//			@Override
+//			protected void canceling() {
+//				super.canceling();
+//				try {
+//					System.out.println("Server Closed");
+//					if (socket != null)
+//						socket.close();
+//					if (server != null)
+//						server.close();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//
+//			@Override
+//			public boolean belongsTo(Object family) {
+//				return family.equals("MonitorPortJob");
+//			}
+//		};
+//		job.setUser(true);
+//		job.schedule();
+//		this.monitor = new OnlineMonitor(readAttributes(kvText, paText), incomingStates);
+//		Thread thread = new Thread(this.monitor);
+//		thread.start();
+//	}
 
 	void updateUI(String message) {
 		display.asyncExec(new Runnable() {
@@ -476,13 +465,13 @@ public class FiniteStateMachine extends ViewPart {
 		});
 	}
 
-	private Event getEvent(String input) {
-		String[] tokens = input.split(",");
-		String object = tokens[0].substring(tokens[0].indexOf("=") + 1).replace("\"", "").trim();
-		String field = tokens[1].substring(0, tokens[1].indexOf("=")).replace("\"", "").trim();
-		String value = tokens[1].substring(tokens[1].indexOf("=") + 1).replace("\"", "").trim();
-		return new Event(object.replace("/", ".") + "." + field, value);
-	}
+//	private Event getEvent(String input) {
+//		String[] tokens = input.split(",");
+//		String object = tokens[0].substring(tokens[0].indexOf("=") + 1).replace("\"", "").trim();
+//		String field = tokens[1].substring(0, tokens[1].indexOf("=")).replace("\"", "").trim();
+//		String value = tokens[1].substring(tokens[1].indexOf("=") + 1).replace("\"", "").trim();
+//		return new Event(object.replace("/", ".") + "." + field, value);
+//	}
 
 	private void browseButtonAction(SelectionEvent e) {
 		if (image != null) {
