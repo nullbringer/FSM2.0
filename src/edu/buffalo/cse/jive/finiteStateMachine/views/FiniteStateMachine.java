@@ -286,13 +286,6 @@ public class FiniteStateMachine extends ViewPart {
 
 		svgGenerator = new SvgGenerator(hcanvasText, vcanvasText, browser, imageComposite, rootScrollComposite,
 				mainComposite, display);
-		listenButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				listenButtonAction(e);
-			}
-		});
 		buildButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -340,13 +333,6 @@ public class FiniteStateMachine extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				resetButtonAction(e);
-			}
-		});
-
-		stopButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Job.getJobManager().cancel("MonitorPortJob");
 			}
 		});
 	}
