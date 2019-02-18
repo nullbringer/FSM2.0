@@ -71,7 +71,7 @@ public class FiniteStateMachine extends ViewPart {
 	private Button browseButton;
 //	private Button listenButton;
 //	private Button stopButton;
-	private Button buildButton;
+	private Button validateButton;
 	private Button exportButton;
 	Composite imageComposite;
 	Composite image2Composite;
@@ -99,11 +99,11 @@ public class FiniteStateMachine extends ViewPart {
 	String svg;
 	private Label propertyLabel;
 	private Text propertyText;
-	public TransitionBuilder transitionBuilder;
 	private BlockingQueue<Event> incomingStates;
 	private SvgGenerator svgGenerator;
+	private TransitionBuilder transitionBuilder;
+	private Label errorText;
 	private Monitor monitor;
-	private boolean online = false;
 
 	/**
 	 * The constructor.
@@ -187,17 +187,17 @@ public class FiniteStateMachine extends ViewPart {
 		addButton.setText("Add");
 		addButton.setToolTipText("Adds the key attribute selected");
 
-		resetButton = new Button(evComposite, SWT.PUSH);
-		resetButton.setText("Reset");
-		resetButton.setToolTipText("Clears the key attributes");
-
-		buildButton = new Button(evComposite, SWT.PUSH);
-		buildButton.setText("Build");
-		buildButton.setToolTipText("Builds the state diagram");
-
 		drawButton = new Button(evComposite, SWT.PUSH);
 		drawButton.setText("Draw");
 		drawButton.setToolTipText("Draws the state diagram");
+
+		validateButton = new Button(evComposite, SWT.PUSH);
+		validateButton.setText("Validate");
+		validateButton.setToolTipText("Validates and draws the state diagram");
+
+		resetButton = new Button(evComposite, SWT.PUSH);
+		resetButton.setText("Reset");
+		resetButton.setToolTipText("Clears the key attributes");
 
 		exportButton = new Button(evComposite, SWT.PUSH);
 		exportButton.setText("Export");
@@ -233,6 +233,13 @@ public class FiniteStateMachine extends ViewPart {
 		grid.widthHint = 400;
 		grid.heightHint = 100;
 		propertyText.setLayoutData(grid);
+
+		// Error Composite
+		Composite errorComposite = new Composite(mainComposite, SWT.NONE);
+		errorComposite.setLayout(new GridLayout(1, false));
+		errorText = new Label(errorComposite, SWT.NONE);
+		errorText.setText("                                                                ");
+
 		// Image composite
 
 		imageComposite = new Composite(mainComposite, SWT.NONE);
@@ -275,11 +282,17 @@ public class FiniteStateMachine extends ViewPart {
 
 		svgGenerator = new SvgGenerator(hcanvasText, vcanvasText, browser, imageComposite, rootScrollComposite,
 				mainComposite, display);
-		buildButton.addSelectionListener(new SelectionAdapter() {
+
+		addButton.setEnabled(false);
+		drawButton.setEnabled(false);
+		validateButton.setEnabled(false);
+		exportButton.setEnabled(false);
+
+		validateButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				buildButtonAction(e);
+				validateButtonAction(e);
 			}
 		});
 		browseButton.addSelectionListener(new SelectionAdapter() {
@@ -327,151 +340,64 @@ public class FiniteStateMachine extends ViewPart {
 	}
 
 	private Set<String> readAttributes(Text attributes, Text abbreviations) {
-		Set<String> keyAttributes;
 		if (attributes != null && attributes.getText().length() > 0) {
-			keyAttributes = new LinkedHashSet<String>();
+			Set<String> keyAttributes = new LinkedHashSet<String>();
 			String selected = attributes.getText();
 			for (String attribute : selected.split(",")) {
 				keyAttributes.add(attribute.trim());
 			}
 
 			if (abbreviations != null && abbreviations.getText().length() > 0) {
-				for (String abbreviation : abbreviations.getText().split(",")) {
-					String attribute = abbreviation.split("=")[0].trim();
+				String[] tokens = abbreviations.getText().split(",");
+				if (tokens == null || tokens.length == 0)
+					throw new IllegalArgumentException("Invalid Abbreviations");
+				for (String abbreviation : tokens) {
+					String[] tks = abbreviation.split("=");
+					if (tks == null || tks.length != 2)
+						throw new IllegalArgumentException("Invalid Abbreviations");
+					String attribute = tks[0].trim();
 					if (keyAttributes.contains(attribute)) {
-						Event.map.put(attribute, abbreviation.split("=")[1].trim());
+						Event.map.put(attribute, tks[1].trim());
+					} else {
+						throw new IllegalArgumentException("Invalid Abbreviations");
 					}
 				}
 			}
 			return keyAttributes;
 		}
-		return null;
+		throw new IllegalArgumentException("Please add atleast one attribute");
 	}
 
-	private List<Expression> parseExpressions(Text propertyText) throws IOException {
-		Parser parser = new ParserImpl();
-		String properties = propertyText.getText().trim();
-		return parser.parse(properties.split(";"));
-	}
-
-	private void buildButtonAction(SelectionEvent e) {
-		this.transitionBuilder = new TransitionBuilder();
+	private List<Expression> parseExpressions(Text propertyText) throws Exception {
 		if (propertyText != null && propertyText.getText().length() > 0) {
-			try {
-				List<Expression> expressions = parseExpressions(propertyText);
-				if (online) {
-					monitor.resetStates();
-					monitor.validate(expressions);
-					monitor.buildTransitions(this.transitionBuilder);
-				} else {
-					monitor = new OfflineMonitor(readAttributes(kvText, paText), incomingStates);
-					monitor.run();
-					monitor.resetStates();
-					monitor.validate(expressions);
-					monitor.buildTransitions(this.transitionBuilder);
-				}
-			} catch (IOException e1) {
-				statusLineManager.setErrorMessage("Unexpected error parsing properties");
-				e1.printStackTrace();
+			Parser parser = new ParserImpl();
+			String properties = propertyText.getText().trim();
+			return parser.parse(properties.split(";"));
+		}
+		throw new IllegalArgumentException("Please enter properties to validate");
+	}
+
+	private void validateButtonAction(SelectionEvent e) {
+		errorText.setText("                                                                ");
+		try {
+			Set<String> fields = readAttributes(kvText, paText);
+			if (monitor == null || !monitor.getKeyFields().equals(fields)) {
+				monitor = new OfflineMonitor(fields, incomingStates);
+				monitor.run();
 			}
-		} else {
-			if (online) {
-				monitor.resetStates();
-				this.monitor.buildTransitions(this.transitionBuilder);
-			} else {
-				this.monitor = new OfflineMonitor(readAttributes(kvText, paText), incomingStates);
-				monitor.resetStates();
-				this.monitor.run();
-				this.monitor.buildTransitions(this.transitionBuilder);
-			}
+			monitor.validate(parseExpressions(propertyText));
+			transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates(), true);
+			transitionBuilder.build();
+			svgGenerator.generate(transitionBuilder.getTransitions());
+			exportButton.setEnabled(true);
+		} catch (IllegalArgumentException e1) {
+			e1.printStackTrace();
+			errorText.setText(e1.getMessage());
+		} catch (Exception e2) {
+			errorText.setText("Invalid properties");
+			e2.printStackTrace();
 		}
 	}
-
-//	private void listenButtonAction(SelectionEvent e) {
-//		this.online = true;
-//		this.incomingStates = new LinkedBlockingQueue<Event>();
-//		Job job = new Job("MonitorPortJob") {
-//			ServerSocket server;
-//			Socket socket;
-//
-//			protected IStatus run(IProgressMonitor monitor) {
-//				String line = "";
-//				try {
-//					server = new ServerSocket(5000);
-//					System.out.println("Server started at port 5000");
-//
-//					socket = server.accept();
-//					System.out.println("Client accepted");
-//					DataInputStream in = new DataInputStream(new BufferedInputStream(socket.getInputStream(), 131072));
-//					while (true) {
-//						try {
-//							if (in.available() > 0) {
-//								incomingStates.put(getEvent(in.readUTF().replace("\"", "").trim()));
-//							}
-//						} catch (IOException | InterruptedException e) {
-//							System.out.println("Job Stopped");
-//							break;
-//						}
-//					}
-//					socket.close();
-//					server.close();
-//					updateUI("Socket: Client Disconnected");
-//
-//				} catch (EOFException eofe) {
-//					System.out.println(line);
-//					updateUI("Error:Reached end-of-file");
-//					System.out.println("Reached end-of-file");
-//				} catch (IOException ioe) {
-//					System.out.println("Connection problem");
-//					updateUI("Error:Connection problem");
-//					System.out.println(line);
-//				}
-//				return Status.OK_STATUS;
-//			}
-//
-//			@Override
-//			protected void canceling() {
-//				super.canceling();
-//				try {
-//					System.out.println("Server Closed");
-//					if (socket != null)
-//						socket.close();
-//					if (server != null)
-//						server.close();
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//
-//			@Override
-//			public boolean belongsTo(Object family) {
-//				return family.equals("MonitorPortJob");
-//			}
-//		};
-//		job.setUser(true);
-//		job.schedule();
-//		this.monitor = new OnlineMonitor(readAttributes(kvText, paText), incomingStates);
-//		Thread thread = new Thread(this.monitor);
-//		thread.start();
-//	}
-
-	void updateUI(String message) {
-		display.asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				statusLabel.setText(message);
-			}
-		});
-	}
-
-//	private Event getEvent(String input) {
-//		String[] tokens = input.split(",");
-//		String object = tokens[0].substring(tokens[0].indexOf("=") + 1).replace("\"", "").trim();
-//		String field = tokens[1].substring(0, tokens[1].indexOf("=")).replace("\"", "").trim();
-//		String value = tokens[1].substring(tokens[1].indexOf("=") + 1).replace("\"", "").trim();
-//		return new Event(object.replace("/", ".") + "." + field, value);
-//	}
 
 	private void browseButtonAction(SelectionEvent e) {
 		if (image != null) {
@@ -493,13 +419,19 @@ public class FiniteStateMachine extends ViewPart {
 		fileText.setText(fileName);
 		attributeList.removeAll();
 		kvText.setText("");
+		paText.setText("");
+		propertyText.setText("");
+		errorText.setText("                                                                ");
+		monitor = null;
 		InputFileParser inputFileParser = new InputFileParser(fileName);
 		Set<String> allAttributes = inputFileParser.getAllFields();
 		this.incomingStates = inputFileParser.getEvents();
 		for (String attribute : allAttributes) {
 			attributeList.add(attribute);
 		}
+		addButton.setEnabled(true);
 		drawButton.setEnabled(true);
+		validateButton.setEnabled(true);
 		statusLineManager.setMessage("Loaded " + fileName);
 	}
 
@@ -509,12 +441,15 @@ public class FiniteStateMachine extends ViewPart {
 		fd.setText("Export As");
 		String[] filterExtensions = { "*.svg" };
 		fd.setFilterExtensions(filterExtensions);
-		try {
-			reader.outputImage(new File(fd.open()));
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		String fileName = fd.open();
+		if (fileName != null) {
+			try {
+				reader.outputImage(new File(fd.open()));
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -538,13 +473,28 @@ public class FiniteStateMachine extends ViewPart {
 	}
 
 	private void drawButtonAction(SelectionEvent e) {
-		svgGenerator.generate(this.transitionBuilder.getTransitions());
-		statusLineManager.setMessage("Finite State Model for " + kvText.getText());
+		errorText.setText("                                                                ");
+		try {
+			Set<String> fields = readAttributes(kvText, paText);
+			if (monitor == null || !monitor.getKeyFields().equals(fields)) {
+				monitor = new OfflineMonitor(fields, incomingStates);
+				monitor.run();
+			}
+			transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates(), false);
+			transitionBuilder.build();
+			svgGenerator.generate(transitionBuilder.getTransitions());
+			statusLineManager.setMessage("Finite State Model for " + kvText.getText());
+			exportButton.setEnabled(true);
+		} catch (IllegalArgumentException e1) {
+			errorText.setText(e1.getMessage());
+		}
 	}
 
 	private void resetButtonAction(SelectionEvent e) {
 		kvText.setText("");
 		paText.setText("");
+		propertyText.setText("");
+		errorText.setText("                                                                ");
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package edu.buffalo.cse.jive.finiteStateMachine.parser;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +26,7 @@ public class ParserImpl implements Parser {
 	private Expression expression;
 
 	@Override
-	public List<Expression> parse(String[] inputs) throws IOException {
+	public List<Expression> parse(String[] inputs) throws Exception {
 		List<Expression> expressions = new ArrayList<>();
 		for (String input : inputs) {
 			Node<String> tree = buildPrecedenceTree(convertToPostfix(Tokenizer.tokenize(input)));

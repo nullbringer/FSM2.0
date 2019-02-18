@@ -1,7 +1,6 @@
 package edu.buffalo.cse.jive.finiteStateMachine.monitor;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +11,6 @@ import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.Expression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Event;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State;
-import edu.buffalo.cse.jive.finiteStateMachine.models.TransitionBuilder;
-import edu.buffalo.cse.jive.finiteStateMachine.util.Pair;
 
 public abstract class Monitor implements Runnable {
 
@@ -65,6 +62,8 @@ public abstract class Monitor implements Runnable {
 	}
 
 	public void validate(List<Expression> expressions) {
+		rootState.reset();
+		resetStates();
 		rootState.setValid(validate(rootState, expressions));
 	}
 
@@ -81,21 +80,6 @@ public abstract class Monitor implements Runnable {
 			valid = expression.evaluate(new Context(root, null, states)) && valid;
 		}
 		return valid;
-	}
-
-	public void buildTransitions(TransitionBuilder transitionBuilder) {
-		transitionBuilder.addInitialState(rootState, rootState.isValid());
-		buildTransitions(null, rootState, new HashSet<Pair<State, State>>(), transitionBuilder);
-	}
-
-	private void buildTransitions(State prev, State curr, Set<Pair<State, State>> visited,
-			TransitionBuilder transitionBuilder) {
-		for (State next : states.get(curr))
-			if (visited.add(new Pair<State, State>(curr, next)))
-				buildTransitions(curr, next, visited, transitionBuilder);
-
-		if (prev != null)
-			transitionBuilder.addTransition(prev, curr, curr.isValid());
 	}
 
 	protected void printStates() {

@@ -3,7 +3,6 @@
  */
 package edu.buffalo.cse.jive.finiteStateMachine.parser;
 
-import java.io.IOException;
 import java.util.List;
 
 import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.Expression;
@@ -15,5 +14,5 @@ import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.Expression;
  */
 public interface Parser {
 
-	public List<Expression> parse(String[] inputs) throws IOException;
+	public List<Expression> parse(String[] inputs) throws Exception;
 }
