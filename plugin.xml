@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="JIVE"
+            id="Finite_State_Machine_Offline">
+      </category>
+      <view
+            id="edu.buffalo.cse.jive.finiteStateMachine.views.FiniteStateMachine"
+            name="Finite State Machine Offline"
+            icon="icons/sample.png"
+            class="edu.buffalo.cse.jive.finiteStateMachine.views.FiniteStateMachine"
+            category="Finite_State_Machine_Offline"
+            inject="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="edu.buffalo.cse.jive.finiteStateMachine.views.FiniteStateMachine"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"
+               ratio="0.5">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+</plugin>
