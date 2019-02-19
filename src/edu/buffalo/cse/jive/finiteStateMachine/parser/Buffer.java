@@ -14,11 +14,11 @@ public class Buffer {
 		line = line + "\n";
 	}
 
-	public char getChar() {
+	public char getChar() throws Exception {
 		if (position == line.length()) {
 			line = s.nextLine();
 			if (line == null)
-				System.exit(0);
+				throw new Exception("Error Parsing String");
 			position = 0;
 			line = line + "\n";
 		}

@@ -51,7 +51,7 @@ class ExpressionFactory {
 		this.lexer = lexer;
 	}
 
-	public Expression getExpression() {
+	public Expression getExpression() throws Exception {
 		lexer.lex();
 		while (lexer.getNextToken() != Token.SEMICOLON) {
 			Imply imply = new Imply(lexer);
@@ -73,7 +73,7 @@ class ExpressionFactory {
 class Imply {
 	private Expression expression;
 
-	public Imply(Lexer lexer) {
+	public Imply(Lexer lexer) throws Exception {
 		Or e1, e2;
 		e1 = new Or(lexer);
 		expression = e1.getExpression();
@@ -96,7 +96,7 @@ class Imply {
 class Or {
 	private Expression expression;
 
-	public Or(Lexer lexer) {
+	public Or(Lexer lexer) throws Exception {
 		And t;
 		Or e;
 		t = new And(lexer);
@@ -122,7 +122,7 @@ class Or {
 class And {
 	private Expression expression;
 
-	public And(Lexer lexer) {
+	public And(Lexer lexer) throws Exception {
 		BF f;
 		And t;
 		f = new BF(lexer);
@@ -146,7 +146,7 @@ class And {
 class BF {
 	private Expression expression;
 
-	public BF(Lexer lexer) {
+	public BF(Lexer lexer) throws Exception {
 		Imply e;
 		Rel r;
 		switch (lexer.getNextToken()) {
@@ -218,7 +218,7 @@ class Rel { // relexp -> expr ('<' | '>' | '<=' | '>=' | '==' | '!= ') expr
 
 	private Expression expression;
 
-	public Rel(Lexer lexer) {
+	public Rel(Lexer lexer) throws Exception {
 		Expr e1;
 		Expr e2;
 		e1 = new Expr(lexer);
@@ -273,7 +273,7 @@ class Expr { // expr -> term (+ | -) expr | term
 
 	private Expression expression;
 
-	public Expr(Lexer lexer) {
+	public Expr(Lexer lexer) throws Exception {
 		Term t;
 		Expr e;
 		t = new Term(lexer);
@@ -310,7 +310,7 @@ class Term { // term -> factor (* | /) term | factor
 
 	private Expression expression;
 
-	public Term(Lexer lexer) {
+	public Term(Lexer lexer) throws Exception {
 		Factor f;
 		Term t;
 		f = new Factor(lexer);
@@ -348,7 +348,7 @@ class Factor { // factor -> int_ | id | '(' expr ')'
 
 	private Expression expression;
 
-	public Factor(Lexer lexer) {
+	public Factor(Lexer lexer) throws Exception {
 		Expr e;
 		String id;
 		String i;

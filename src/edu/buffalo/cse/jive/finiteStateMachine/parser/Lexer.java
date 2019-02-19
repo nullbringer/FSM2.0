@@ -17,7 +17,7 @@ public class Lexer {
 		ident = "";
 	}
 
-	public int lex() {
+	public int lex() throws Exception {
 		while (Character.isWhitespace(ch))
 			ch = buffer.getChar();
 
@@ -185,7 +185,7 @@ public class Lexer {
 //		return ident;
 //	}
 
-	private String ident() {
+	private String ident() throws Exception {
 		ident = "";
 		do {
 			ident = ident + ch;
@@ -194,7 +194,7 @@ public class Lexer {
 		return ident;
 	}
 
-	private String num() {
+	private String num() throws Exception {
 		ident = "";
 		do {
 			ident = ident + ch;
