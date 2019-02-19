@@ -21,7 +21,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.util.Tokenizer;
  * @author Sandeep Kumar
  * @email skumar28@buffalo.edu
  */
-public class ParserImpl implements Parser {
+public class BottomUpParser implements Parser {
 
 	private Expression expression;
 

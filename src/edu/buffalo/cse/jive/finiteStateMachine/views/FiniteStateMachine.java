@@ -51,7 +51,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.TransitionBuilder;
 import edu.buffalo.cse.jive.finiteStateMachine.monitor.Monitor;
 import edu.buffalo.cse.jive.finiteStateMachine.monitor.OfflineMonitor;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.Parser;
-import edu.buffalo.cse.jive.finiteStateMachine.parser.ParserImpl;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.TopDownParser;
 import net.sourceforge.plantuml.SourceStringReader;
 
 public class FiniteStateMachine extends ViewPart {
@@ -370,7 +370,7 @@ public class FiniteStateMachine extends ViewPart {
 
 	private List<Expression> parseExpressions(Text propertyText) throws Exception {
 		if (propertyText != null && propertyText.getText().length() > 0) {
-			Parser parser = new ParserImpl();
+			Parser parser = new TopDownParser();
 			String properties = propertyText.getText().trim();
 			return parser.parse(properties.split(";"));
 		}

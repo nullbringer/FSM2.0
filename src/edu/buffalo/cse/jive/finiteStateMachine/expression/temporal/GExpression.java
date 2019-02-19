@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.buffalo.cse.jive.finiteStateMachine.expression.core;
+package edu.buffalo.cse.jive.finiteStateMachine.expression.temporal;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -18,21 +18,21 @@ import edu.buffalo.cse.jive.finiteStateMachine.util.Pair;
  * @email sraghuna@buffalo.edu
  *
  */
-public class FExpression extends UnaryExpression<Expression> {
+public class GExpression extends UnaryExpression<Expression> {
 
 	private boolean result;
 
-	public FExpression() {
+	public GExpression() {
 		super();
 	}
 
-	public FExpression(Expression expression) {
+	public GExpression(Expression expression) {
 		super(expression);
 	}
 
 	@Override
 	public Boolean evaluate(Context context) {
-		result = false;
+		result = true;
 		evaluate(null, context.getCurrentState(), new HashSet<Pair<State, State>>(), getExpression(),
 				context.getStates());
 		return result;
@@ -41,9 +41,12 @@ public class FExpression extends UnaryExpression<Expression> {
 	private State evaluate(State prev, State curr, Set<Pair<State, State>> visited, Expression expression,
 			Map<State, Set<State>> states) {
 		for (State next : states.get(curr)) {
-			if (visited.add(new Pair<State, State>(curr, next)) && !result)
-				result = expression.evaluate(
-						new Context(curr, evaluate(curr, next, visited, expression, states), states)) || result;
+			if (visited.add(new Pair<State, State>(curr, next))) {
+				boolean currentResult = expression
+						.evaluate(new Context(curr, evaluate(curr, next, visited, expression, states), states));
+				curr.setValid(currentResult);
+				result = currentResult && result;
+			}
 		}
 		return curr;
 	}

@@ -1,5 +1,6 @@
 package edu.buffalo.cse.jive.finiteStateMachine.expression.relational;
 
+import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 
 /**
@@ -11,6 +12,10 @@ public class EqualityExpression extends RelationalExpression {
 
 	public EqualityExpression() {
 		super();
+	}
+
+	public EqualityExpression(ValueExpression expressionA, ValueExpression expressionB) {
+		super(expressionA, expressionB);
 	}
 
 	@Override

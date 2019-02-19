@@ -15,6 +15,10 @@ public class AndExpression extends BinaryExpression<Expression, Expression> {
 		super();
 	}
 
+	public AndExpression(Expression expressionA, Expression expressionB) {
+		super(expressionA, expressionB);
+	}
+
 	public Boolean evaluate(Context context) {
 		return getExpressionA().evaluate(context) && getExpressionB().evaluate(context);
 	}

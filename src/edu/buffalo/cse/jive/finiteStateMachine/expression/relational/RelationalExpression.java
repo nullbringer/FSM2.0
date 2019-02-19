@@ -10,4 +10,11 @@ import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
  */
 public abstract class RelationalExpression extends BinaryExpression<ValueExpression, ValueExpression> {
 
+	public RelationalExpression() {
+		super();
+	}
+
+	public RelationalExpression(ValueExpression expressionA, ValueExpression expressionB) {
+		super(expressionA, expressionB);
+	}
 }

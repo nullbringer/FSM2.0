@@ -15,6 +15,10 @@ public class OrExpression extends BinaryExpression<Expression, Expression> {
 		super();
 	}
 
+	public OrExpression(Expression expressionA, Expression expressionB) {
+		super(expressionA, expressionB);
+	}
+
 	public Boolean evaluate(Context context) {
 		return getExpressionA().evaluate(context) || getExpressionB().evaluate(context);
 	}

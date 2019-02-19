@@ -15,6 +15,8 @@ import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.GreaterThan
 import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.LessThanEqualToExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.LessThanExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.NotEqualityExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.FExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.GExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.DoubleValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.IntegerValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.StringValueExpression;

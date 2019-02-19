@@ -1,5 +1,6 @@
 package edu.buffalo.cse.jive.finiteStateMachine.expression.arithmetic;
 
+import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 
 /**
@@ -11,6 +12,10 @@ public class AdditionExpression extends ArithmeticExpression {
 
 	public AdditionExpression() {
 		super();
+	}
+
+	public AdditionExpression(ValueExpression expression, ValueExpression expression2) {
+		super(expression, expression2);
 	}
 
 	@Override

@@ -15,6 +15,10 @@ public class NotExpression extends UnaryExpression<Expression> {
 		super();
 	}
 
+	public NotExpression(Expression expression) {
+		super(expression);
+	}
+
 	public Boolean evaluate(Context ct) {
 		return !getExpression().evaluate(ct);
 	}

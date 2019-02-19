@@ -13,6 +13,12 @@ public abstract class ArithmeticExpression extends ValueExpression
 		super();
 	}
 
+	public ArithmeticExpression(ValueExpression expressionA, ValueExpression expressionB) {
+		super();
+		this.expressionA = expressionA;
+		this.expressionB = expressionB;
+	}
+
 	public ValueExpression getExpressionA() {
 		return expressionA;
 	}
