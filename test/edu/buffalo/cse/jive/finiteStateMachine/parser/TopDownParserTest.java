@@ -8,9 +8,9 @@ class TopDownParserTest {
 
 	public static void main(String[] args) {
 		TopDownParser parser = new TopDownParser();
-		
+		String exp = "G[(( r > 0 -> w == 0) && (w == 1 -> r == 0)) && ((w == 0 || w == 1) && (r > 0 && ww > 0 -> r' <= r))]";
 		try {
-			List<Expression> expressions = parser.parse(new String[] { "G[ w == w' + \"5\" -> r == 1 ];", "G[ w == w' + \"5\" -> r == 1 ];" });
+			List<Expression> expressions = parser.parse(new String[] { exp });
 			expressions.get(0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
