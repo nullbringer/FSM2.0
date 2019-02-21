@@ -2,12 +2,15 @@ package edu.buffalo.cse.jive.finiteStateMachine.expression.arithmetic;
 
 import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.IBinaryExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 
 public abstract class ArithmeticExpression extends ValueExpression
 		implements IBinaryExpression<ValueExpression, ValueExpression> {
-
 	private ValueExpression expressionA;
 	private ValueExpression expressionB;
+	{
+		setEvaluatable(false);
+	}
 
 	public ArithmeticExpression() {
 		super();
@@ -35,4 +38,10 @@ public abstract class ArithmeticExpression extends ValueExpression
 		this.expressionB = expressionB;
 	}
 
+	@Override
+	public Boolean evaluate(Context context) {
+		getExpressionA().evaluate(context);
+		getExpressionB().evaluate(context);
+		return true;
+	}
 }

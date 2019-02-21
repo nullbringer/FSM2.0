@@ -348,6 +348,7 @@ public class FiniteStateMachine extends ViewPart {
 			}
 
 			if (abbreviations != null && abbreviations.getText().length() > 0) {
+				Event.map.clear();
 				String[] tokens = abbreviations.getText().split(",");
 				if (tokens == null || tokens.length == 0)
 					throw new IllegalArgumentException("Invalid Abbreviations");
@@ -381,20 +382,30 @@ public class FiniteStateMachine extends ViewPart {
 		errorText.setText("                                                                ");
 		try {
 			Set<String> fields = readAttributes(kvText, paText);
-			if (monitor == null || !monitor.getKeyFields().equals(fields)) {
+			List<Expression> expressions = null;
+			try {
+				expressions = parseExpressions(propertyText);
+			} catch (Exception e3) {
+				errorText.setText(e3.getMessage());
+				e3.printStackTrace();
+			}
+			if (expressions != null && expressions.size() > 0) {
 				monitor = new OfflineMonitor(fields, incomingStates);
 				monitor.run();
+				monitor.validate(expressions);
+				transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates(), true);
+				transitionBuilder.build();
+				svgGenerator.generate(transitionBuilder.getTransitions());
+				exportButton.setEnabled(true);
 			}
-			monitor.validate(parseExpressions(propertyText));
-			transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates(), true);
-			transitionBuilder.build();
-			svgGenerator.generate(transitionBuilder.getTransitions());
-			exportButton.setEnabled(true);
 		} catch (IllegalArgumentException e1) {
 			e1.printStackTrace();
 			errorText.setText(e1.getMessage());
+		} catch (ClassCastException e2) {
+			errorText.setText("Type mismatch in properties");
+			e2.printStackTrace();
 		} catch (Exception e2) {
-			errorText.setText("Invalid properties");
+			errorText.setText("Unexpected error parsing properties");
 			e2.printStackTrace();
 		}
 	}
@@ -476,10 +487,8 @@ public class FiniteStateMachine extends ViewPart {
 		errorText.setText("                                                                ");
 		try {
 			Set<String> fields = readAttributes(kvText, paText);
-			if (monitor == null || !monitor.getKeyFields().equals(fields)) {
-				monitor = new OfflineMonitor(fields, incomingStates);
-				monitor.run();
-			}
+			monitor = new OfflineMonitor(fields, incomingStates);
+			monitor.run();
 			transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates(), false);
 			transitionBuilder.build();
 			svgGenerator.generate(transitionBuilder.getTransitions());

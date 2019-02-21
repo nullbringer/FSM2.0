@@ -1,7 +1,5 @@
 package edu.buffalo.cse.jive.finiteStateMachine.parser;
 
-import java.util.Scanner;
-
 public class Lexer {
 
 	private char ch = ' ';
@@ -12,7 +10,7 @@ public class Lexer {
 	private int intValue;
 
 	public Lexer(String input) {
-		buffer = new Buffer(new Scanner(input));
+		buffer = new Buffer(input);
 		ch = ' ';
 		ident = "";
 	}

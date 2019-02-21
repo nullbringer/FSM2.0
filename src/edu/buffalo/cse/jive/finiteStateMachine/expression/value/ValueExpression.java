@@ -7,6 +7,10 @@ public abstract class ValueExpression extends Expression implements Comparable<V
 
 	private Object value;
 
+	{
+		setEvaluatable(false);
+	}
+
 	public ValueExpression() {
 		this.hashCode();
 	}
@@ -41,7 +45,7 @@ public abstract class ValueExpression extends Expression implements Comparable<V
 		case "Integer":
 			return new Integer((Integer) value1).compareTo(new Integer((Integer) value2));
 		}
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Type mismatch in properties");
 	}
 
 	public Object add(ValueExpression valueExpression) {
@@ -56,7 +60,7 @@ public abstract class ValueExpression extends Expression implements Comparable<V
 			return new Integer((Integer) value1) + new Integer((Integer) value2);
 
 		}
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Type mismatch in properties");
 	}
 
 	public Object subtract(ValueExpression valueExpression) {
@@ -68,7 +72,7 @@ public abstract class ValueExpression extends Expression implements Comparable<V
 		case "Integer":
 			return new Integer((Integer) value1) - new Integer((Integer) value2);
 		}
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Type mismatch in properties");
 	}
 
 	public Object divide(ValueExpression valueExpression) {
@@ -80,7 +84,7 @@ public abstract class ValueExpression extends Expression implements Comparable<V
 		case "Integer":
 			return new Integer((Integer) value1) / new Integer((Integer) value2);
 		}
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Type mismatch in properties");
 	}
 
 	public Object multiply(ValueExpression valueExpression) {
@@ -92,7 +96,7 @@ public abstract class ValueExpression extends Expression implements Comparable<V
 		case "Integer":
 			return new Integer((Integer) value1) * new Integer((Integer) value2);
 		}
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Type mismatch in properties");
 	}
 
 	@Override
@@ -101,7 +105,7 @@ public abstract class ValueExpression extends Expression implements Comparable<V
 			ValueExpression val = (ValueExpression) obj;
 			return this.getValue().equals(val.getValue());
 		}
-		return false;
+		throw new IllegalArgumentException("Type mismatch in properties");
 	}
 
 	@Override

@@ -35,7 +35,10 @@ public class TopDownParser implements Parser {
 	public List<Expression> parse(String[] inputs) throws Exception {
 		List<Expression> expressions = new ArrayList<Expression>();
 		for (String input : inputs) {
-			expressions.add(new ExpressionFactory(new Lexer(input + ";")).getExpression());
+			Expression expression = new ExpressionFactory(new Lexer(input + ";")).getExpression();
+			if (!expression.isEvaluatable())
+				throw new IllegalArgumentException("Syntax Error in Properties");
+			expressions.add(expression);
 		}
 		return expressions;
 	}
@@ -56,6 +59,9 @@ class ExpressionFactory {
 		while (lexer.getNextToken() != Token.SEMICOLON) {
 			Imply imply = new Imply(lexer);
 			expression = imply.getExpression();
+			if (expression == null) {
+				throw new IllegalArgumentException("Syntax Error in Properties");
+			}
 		}
 		return expression;
 	}

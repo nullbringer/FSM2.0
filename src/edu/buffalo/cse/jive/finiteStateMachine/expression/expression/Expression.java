@@ -12,8 +12,19 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
  */
 public abstract class Expression {
 
+	private boolean evaluatable = true;
+
 	public abstract Boolean evaluate(Context context);
 
 	public Expression() {
 	}
+
+	public boolean isEvaluatable() {
+		return evaluatable;
+	}
+
+	public void setEvaluatable(boolean evaluatable) {
+		this.evaluatable = evaluatable;
+	}
+
 }

@@ -1,24 +1,19 @@
 package edu.buffalo.cse.jive.finiteStateMachine.parser;
 
-import java.util.Scanner;
-
 public class Buffer {
 
 	private String line = "";
 	private int position = 0;
-	private Scanner s;
 
-	public Buffer(Scanner s) {
-		this.s = s;
-		line = s.nextLine();
+	public Buffer(String s) {
+		line = s;
 		line = line + "\n";
 	}
 
 	public char getChar() throws Exception {
 		if (position == line.length()) {
-			line = s.nextLine();
 			if (line == null)
-				throw new Exception("Error Parsing String");
+				throw new IllegalArgumentException("Syntax error in properties");
 			position = 0;
 			line = line + "\n";
 		}
