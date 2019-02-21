@@ -61,10 +61,10 @@ public abstract class Monitor implements Runnable {
 		return null;
 	}
 
-	public void validate(List<Expression> expressions) throws Exception {
-		rootState.reset();
-		resetStates();
-		rootState.setValid(validate(rootState, expressions));
+	public boolean validate(List<Expression> expressions) throws Exception {
+		boolean result = validate(rootState, expressions);
+		rootState.setValid(result);
+		return result;
 	}
 
 	public void resetStates() {

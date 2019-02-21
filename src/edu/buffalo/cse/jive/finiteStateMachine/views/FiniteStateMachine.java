@@ -392,7 +392,9 @@ public class FiniteStateMachine extends ViewPart {
 			if (expressions != null && expressions.size() > 0) {
 				monitor = new OfflineMonitor(fields, incomingStates);
 				monitor.run();
-				monitor.validate(expressions);
+				if (monitor.validate(expressions)) {
+					errorText.setText("All properties satisfied.");
+				}
 				transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates(), true);
 				transitionBuilder.build();
 				svgGenerator.generate(transitionBuilder.getTransitions());
