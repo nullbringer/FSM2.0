@@ -22,7 +22,11 @@ import edu.buffalo.cse.jive.finiteStateMachine.expression.value.IntegerValueExpr
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.StringValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Event;
 import edu.buffalo.cse.jive.finiteStateMachine.util.Tokenizer;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class ExpressionFactory {
 
 	public ExpressionFactory() {

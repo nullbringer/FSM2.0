@@ -5,7 +5,11 @@ import java.util.List;
 
 import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.Expression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class VectorExpression extends Expression {
 
 	private List<Object> vectorValue;

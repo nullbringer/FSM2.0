@@ -1,5 +1,9 @@
 package edu.buffalo.cse.jive.finiteStateMachine.expression.expression;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public abstract class UnaryExpression<T extends Expression> extends Expression implements IUnaryExpression<T> {
 
 	private T expression;

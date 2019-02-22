@@ -10,9 +10,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class Operators {
 
-	// TODO - Set precedence value
 	public static final Map<String, Integer> OPERATOR_PRECEDENCE;
 	static {
 		Map<String, Integer> map = new HashMap<>();

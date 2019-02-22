@@ -1,5 +1,12 @@
 package edu.buffalo.cse.jive.finiteStateMachine.parser;
 
+/**
+ * @author Bharat Jayaraman
+ * @email bharat@buffalo.edu
+ * 
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ */
 class Token {
 	public static final int SEMICOLON = 0;
 	public static final int COMMA = 1;
@@ -34,6 +41,7 @@ class Token {
 	public static final int PRIME_OP = 30;
 	public static final int N_INT_LIT = 31;
 	public static final int STRING_LIT = 32;
+	public static final int E_OP = 33;
 
 	private static String[] lexemes = { ";", ",", "+", "-", "*", "/", "=", ">", "<", "<=", ">=", "==", "!=", "(", ")",
 			"{", "}", "id", "int_lit", "&&", "||", "->", "F", "G", "U", "X", "[", "]", "!", "end", "'" };

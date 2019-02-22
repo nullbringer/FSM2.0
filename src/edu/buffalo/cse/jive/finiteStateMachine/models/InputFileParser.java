@@ -7,7 +7,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class InputFileParser {
 
 	private Set<String> allFields;

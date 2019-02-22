@@ -3,7 +3,11 @@ package edu.buffalo.cse.jive.finiteStateMachine.expression.core;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.IUnaryExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class PrimeVariableExpression extends ValueExpression
 		implements Comparable<ValueExpression>, IUnaryExpression<ValueExpression> {
 

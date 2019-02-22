@@ -3,7 +3,11 @@ package edu.buffalo.cse.jive.finiteStateMachine.expression.edge;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.BinaryExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class EdgeExpression extends BinaryExpression<VectorExpression, VectorExpression> {
 
 	public EdgeExpression() {

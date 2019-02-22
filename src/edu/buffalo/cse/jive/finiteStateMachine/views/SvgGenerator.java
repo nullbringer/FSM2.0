@@ -15,7 +15,11 @@ import org.eclipse.swt.widgets.Text;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class SvgGenerator {
 
 	private Browser browser;

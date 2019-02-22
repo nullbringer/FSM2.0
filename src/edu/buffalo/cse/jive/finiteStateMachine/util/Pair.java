@@ -1,5 +1,10 @@
 package edu.buffalo.cse.jive.finiteStateMachine.util;
 
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class Pair<L, R> {
 
 	private final L left;

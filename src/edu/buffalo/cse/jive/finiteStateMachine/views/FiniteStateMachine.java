@@ -54,6 +54,11 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.Parser;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.TopDownParser;
 import net.sourceforge.plantuml.SourceStringReader;
 
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class FiniteStateMachine extends ViewPart {
 
 	/**

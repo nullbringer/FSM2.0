@@ -3,7 +3,11 @@ package edu.buffalo.cse.jive.finiteStateMachine.expression.temporal;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.Expression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.UnaryExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class XExpression extends UnaryExpression<Expression>{
 
 	public XExpression() {

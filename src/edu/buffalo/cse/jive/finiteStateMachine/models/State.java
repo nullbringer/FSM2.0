@@ -4,7 +4,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class State {
 
 	private Map<String, ValueExpression> map;

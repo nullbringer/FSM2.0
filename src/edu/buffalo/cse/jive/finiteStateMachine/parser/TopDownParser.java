@@ -20,6 +20,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.GreaterThan
 import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.LessThanEqualToExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.LessThanExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.NotEqualityExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.EExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.FExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.GExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.UExpression;
@@ -29,6 +30,14 @@ import edu.buffalo.cse.jive.finiteStateMachine.expression.value.IntegerValueExpr
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.StringValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
 
+/**
+ * @author Bharat Jayaraman
+ * @email bharat@buffalo.edu
+ * 
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class TopDownParser implements Parser {
 
 	@Override
@@ -42,7 +51,6 @@ public class TopDownParser implements Parser {
 		}
 		return expressions;
 	}
-
 }
 
 class ExpressionFactory {
@@ -56,12 +64,10 @@ class ExpressionFactory {
 
 	public Expression getExpression() throws Exception {
 		lexer.lex();
-		while (lexer.getNextToken() != Token.SEMICOLON) {
-			Imply imply = new Imply(lexer);
-			expression = imply.getExpression();
-			if (expression == null) {
-				throw new IllegalArgumentException("Syntax Error in Properties");
-			}
+		Imply imply = new Imply(lexer);
+		expression = imply.getExpression();
+		if (expression == null) {
+			throw new IllegalArgumentException("Syntax Error in Properties");
 		}
 		return expression;
 	}
@@ -86,6 +92,8 @@ class Imply {
 		if (lexer.getNextToken() == Token.IMPLY_OP) {
 			lexer.lex();
 			e2 = new Or(lexer);
+			if (e1.getExpression() == null || e2.getExpression() == null)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			expression = new ImplicationExpression(e1.getExpression(), e2.getExpression());
 		}
 	}
@@ -110,6 +118,8 @@ class Or {
 		if (lexer.getNextToken() == Token.OR_OP) {
 			lexer.lex();
 			e = new Or(lexer);
+			if (t.getExpression() == null || e.getExpression() == null)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			expression = new OrExpression(t.getExpression(), e.getExpression());
 		}
 
@@ -136,6 +146,8 @@ class And {
 		if (lexer.getNextToken() == Token.AND_OP) {
 			lexer.lex();
 			t = new And(lexer);
+			if (f.getExpression() == null || t.getExpression() == null)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			expression = new AndExpression(f.getExpression(), t.getExpression());
 		}
 	}
@@ -167,6 +179,8 @@ class BF {
 		case Token.LEFT_PAREN: // '('
 			lexer.lex();
 			e = new Imply(lexer);
+			if (lexer.getNextToken() != Token.RIGHT_PAREN)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over ')'
 			expression = e.getExpression();
 			break;
@@ -176,26 +190,37 @@ class BF {
 			e = new Imply(lexer);
 			lexer.lex(); // skip over ')'
 			expression = new NotExpression(e.getExpression());
-//			e.setExpression(null);
 			break;
 		case Token.F_OP: // F
 			lexer.lex(); // skip over 'F'
+			if (lexer.getNextToken() != Token.LEFT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over [
 			e = new Imply(lexer);
+			if (lexer.getNextToken() != Token.RIGHT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over ]
 			expression = new FExpression(e.getExpression());
 			break;
 		case Token.G_OP: // G
 			lexer.lex(); // skip over 'G'
+			if (lexer.getNextToken() != Token.LEFT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over [
 			e = new Imply(lexer);
+			if (lexer.getNextToken() != Token.RIGHT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over ]
 			expression = new GExpression(e.getExpression());
 			break;
 		case Token.X_OP: // X
 			lexer.lex(); // skip over 'X'
 			lexer.lex(); // skip over [
+			if (lexer.getNextToken() != Token.LEFT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			e = new Imply(lexer);
+			if (lexer.getNextToken() != Token.RIGHT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over ]
 			expression = new XExpression(e.getExpression());
 			break;
@@ -206,8 +231,19 @@ class BF {
 			lexer.lex(); // skip over ]
 			expression = new UExpression(e.getExpression());
 			break;
-		default:
+		case Token.E_OP: // X
+			lexer.lex(); // skip over 'X'
+			lexer.lex(); // skip over [
+			if (lexer.getNextToken() != Token.LEFT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
+			e = new Imply(lexer);
+			if (lexer.getNextToken() != Token.RIGHT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
+			lexer.lex(); // skip over ]
+			expression = new EExpression(e.getExpression());
 			break;
+		default:
+			throw new IllegalArgumentException("Syntax Error in Properties");
 		}
 	}
 
@@ -234,6 +270,8 @@ class Rel { // relexp -> expr ('<' | '>' | '<=' | '>=' | '==' | '!= ') expr
 			int op = lexer.getNextToken();
 			lexer.lex();
 			e2 = new Expr(lexer);
+			if (e1.getExpression() == null || e2.getExpression() == null)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			switch (op) {
 			case Token.EQ_OP:
 				expression = new EqualityExpression((ValueExpression) e1.getExpression(),
@@ -288,6 +326,8 @@ class Expr { // expr -> term (+ | -) expr | term
 			int op = lexer.getNextToken();
 			lexer.lex();
 			e = new Expr(lexer);
+			if (t.getExpression() == null || e.getExpression() == null)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			switch (op) {
 			case Token.ADD_OP:
 				expression = new AdditionExpression((ValueExpression) e.getExpression(),
@@ -325,6 +365,8 @@ class Term { // term -> factor (* | /) term | factor
 			int op = lexer.getNextToken();
 			lexer.lex();
 			t = new Term(lexer);
+			if (t.getExpression() == null || f.getExpression() == null)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			switch (op) {
 			case Token.MULT_OP:
 				expression = new MultiplicationExpression((ValueExpression) f.getExpression(),
@@ -395,6 +437,8 @@ class Factor { // factor -> int_ | id | '(' expr ')'
 		case Token.LEFT_PAREN: // '('
 			lexer.lex();
 			e = new Expr(lexer);
+			if (lexer.getNextToken() != Token.RIGHT_PAREN)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over ')'
 			expression = e.getExpression();
 			break;

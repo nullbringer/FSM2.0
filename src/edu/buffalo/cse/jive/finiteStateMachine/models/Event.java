@@ -7,7 +7,11 @@ import edu.buffalo.cse.jive.finiteStateMachine.expression.value.DoubleValueExpre
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.IntegerValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.StringValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class Event {
 
 	private String field;

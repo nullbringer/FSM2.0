@@ -2,7 +2,11 @@ package edu.buffalo.cse.jive.finiteStateMachine.models;
 
 import java.util.Map;
 import java.util.Set;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class Context {
 
 	private State currentState;

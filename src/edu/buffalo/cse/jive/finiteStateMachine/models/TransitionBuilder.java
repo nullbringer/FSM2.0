@@ -5,7 +5,11 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.buffalo.cse.jive.finiteStateMachine.util.Pair;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public class TransitionBuilder {
 
 	private StringBuilder transitions;

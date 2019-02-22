@@ -3,26 +3,24 @@ package edu.buffalo.cse.jive.finiteStateMachine.expression.temporal;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.Expression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.UnaryExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
+
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
  *
  */
-public class UExpression extends UnaryExpression<Expression> {
+public class EExpression extends UnaryExpression<Expression> {
 
-	public UExpression() {
+	public EExpression() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public UExpression(Expression expression) {
+	public EExpression(Expression expression) {
 		super(expression);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public Boolean evaluate(Context context) {
-		return getExpression().evaluate(context);
+		return null;
 	}
-
 }

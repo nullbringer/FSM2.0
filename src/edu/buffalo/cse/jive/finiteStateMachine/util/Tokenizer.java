@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * @author Bharat Jayaraman
+ * @email bharat@buffalo.edu
+ * 
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
- *
  */
 public class Tokenizer {
 

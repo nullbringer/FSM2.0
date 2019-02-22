@@ -6,7 +6,9 @@ import java.io.StringReader;
 /**
  * @author Bharat Jayaraman
  * @email bharat@buffalo.edu
- *
+ * 
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
  */
 public class Lexer {
 

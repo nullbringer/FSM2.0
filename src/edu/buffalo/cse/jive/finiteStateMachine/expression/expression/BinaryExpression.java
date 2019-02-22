@@ -1,5 +1,9 @@
 package edu.buffalo.cse.jive.finiteStateMachine.expression.expression;
-
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public abstract class BinaryExpression<T extends Expression, V extends Expression> extends Expression
 		implements IBinaryExpression<T, V> {
 

@@ -1,5 +1,12 @@
 package edu.buffalo.cse.jive.finiteStateMachine.parser;
 
+/**
+ * @author Bharat Jayaraman
+ * @email bharat@buffalo.edu
+ * 
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ */
 public class Lexer {
 
 	private char ch = ' ';
@@ -42,6 +49,9 @@ public class Lexer {
 				break;
 			case "U":
 				nextToken = Token.U_OP;
+				break;
+			case "E":
+				nextToken = Token.E_OP;
 				break;
 			case "X":
 				nextToken = Token.X_OP;

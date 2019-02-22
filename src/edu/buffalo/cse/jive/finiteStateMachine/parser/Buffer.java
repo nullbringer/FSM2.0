@@ -1,5 +1,12 @@
 package edu.buffalo.cse.jive.finiteStateMachine.parser;
 
+/**
+ * @author Bharat Jayaraman
+ * @email bharat@buffalo.edu
+ * 
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ */
 public class Buffer {
 
 	private String line = "";

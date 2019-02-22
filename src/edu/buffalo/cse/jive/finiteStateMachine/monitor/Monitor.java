@@ -12,6 +12,11 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Event;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State;
 
+/**
+ * @author Shashank Raghunath
+ * @email sraghuna@buffalo.edu
+ *
+ */
 public abstract class Monitor implements Runnable {
 
 	private Set<String> keyFields;
