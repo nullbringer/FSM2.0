@@ -46,6 +46,7 @@ public class FExpression extends UnaryExpression<Expression> {
 					if (visited.add(next)) {
 						boolean temp = evaluate(root, curr, next, visited, expression, states);
 						childResult = temp && childResult;
+						visited.remove(next);
 					} else {
 						childResult = childResult && currentResult;
 					}
