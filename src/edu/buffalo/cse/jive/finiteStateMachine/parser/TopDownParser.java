@@ -215,9 +215,9 @@ class BF {
 			break;
 		case Token.X_OP: // X
 			lexer.lex(); // skip over 'X'
-			lexer.lex(); // skip over [
 			if (lexer.getNextToken() != Token.LEFT_BOX)
 				throw new IllegalArgumentException("Syntax Error in Properties");
+			lexer.lex(); // skip over [
 			e = new Imply(lexer);
 			if (lexer.getNextToken() != Token.RIGHT_BOX)
 				throw new IllegalArgumentException("Syntax Error in Properties");
@@ -226,16 +226,20 @@ class BF {
 			break;
 		case Token.U_OP: // X
 			lexer.lex(); // skip over 'X'
+			if (lexer.getNextToken() != Token.LEFT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over [
 			e = new Imply(lexer);
+			if (lexer.getNextToken() != Token.RIGHT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over ]
 			expression = new UExpression(e.getExpression());
 			break;
 		case Token.E_OP: // X
 			lexer.lex(); // skip over 'X'
-			lexer.lex(); // skip over [
 			if (lexer.getNextToken() != Token.LEFT_BOX)
 				throw new IllegalArgumentException("Syntax Error in Properties");
+			lexer.lex(); // skip over [
 			e = new Imply(lexer);
 			if (lexer.getNextToken() != Token.RIGHT_BOX)
 				throw new IllegalArgumentException("Syntax Error in Properties");
