@@ -11,7 +11,6 @@ import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.Expression;
 import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.UnaryExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State;
-import edu.buffalo.cse.jive.finiteStateMachine.util.Pair;
 
 /**
  * @author Shashank Raghunath
@@ -30,11 +29,11 @@ public class FExpression extends UnaryExpression<Expression> {
 
 	@Override
 	public Boolean evaluate(Context context) {
-		return evaluate(context.getCurrentState(), null, context.getCurrentState(), new HashSet<Pair<State, State>>(),
+		return evaluate(context.getCurrentState(), null, context.getCurrentState(), new HashSet<State>(),
 				getExpression(), context.getStates());
 	}
 
-	private boolean evaluate(State root, State prev, State curr, Set<Pair<State, State>> visited, Expression expression,
+	private boolean evaluate(State root, State prev, State curr, Set<State> visited, Expression expression,
 			Map<State, Set<State>> states) {
 		boolean currentResult = true;
 		for (State next : states.get(curr)) {
@@ -42,15 +41,17 @@ public class FExpression extends UnaryExpression<Expression> {
 		}
 		if (!currentResult) {
 			boolean childResult = true;
-			int size = visited.size();
 			for (State next : states.get(curr)) {
-				if (!root.equals(next) && childResult && visited.add(new Pair<State, State>(curr, next))) {
-					boolean temp = evaluate(root, curr, next, visited, expression, states);
-					childResult = temp && childResult;
+				if (childResult) {
+					if (visited.add(next)) {
+						boolean temp = evaluate(root, curr, next, visited, expression, states);
+						childResult = temp && childResult;
+					} else {
+						childResult = childResult && currentResult;
+					}
 				}
 			}
-			if (visited.size() > size)
-				currentResult = childResult;
+			currentResult = childResult;
 		}
 		return currentResult;
 	}
