@@ -30,11 +30,11 @@ public class FExpression extends UnaryExpression<Expression> {
 
 	@Override
 	public Boolean evaluate(Context context) {
-		return evaluate(null, context.getCurrentState(), new HashSet<Pair<State, State>>(), getExpression(),
-				context.getStates());
+		return evaluate(context.getCurrentState(), null, context.getCurrentState(), new HashSet<Pair<State, State>>(),
+				getExpression(), context.getStates());
 	}
 
-	private boolean evaluate(State prev, State curr, Set<Pair<State, State>> visited, Expression expression,
+	private boolean evaluate(State root, State prev, State curr, Set<Pair<State, State>> visited, Expression expression,
 			Map<State, Set<State>> states) {
 		boolean currentResult = true;
 		for (State next : states.get(curr)) {
@@ -44,8 +44,8 @@ public class FExpression extends UnaryExpression<Expression> {
 			boolean childResult = true;
 			int size = visited.size();
 			for (State next : states.get(curr)) {
-				if (visited.add(new Pair<State, State>(curr, next)) && childResult) {
-					boolean temp = evaluate(curr, next, visited, expression, states);
+				if (!root.equals(next) && childResult && visited.add(new Pair<State, State>(curr, next))) {
+					boolean temp = evaluate(root, curr, next, visited, expression, states);
 					childResult = temp && childResult;
 				}
 			}
