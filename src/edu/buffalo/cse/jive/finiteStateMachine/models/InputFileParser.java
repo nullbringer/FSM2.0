@@ -7,9 +7,14 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
+ *
+ */
+/**
+ * Parser the Input CSV file and extracts all attributes and Field Write Events
  *
  */
 public class InputFileParser {
@@ -23,6 +28,12 @@ public class InputFileParser {
 		parseFile(fileName);
 	}
 
+	/**
+	 * File should be in the same format as that of JIVE's execution trace. Update
+	 * this method if you expect other formats.
+	 * 
+	 * @param fileName
+	 */
 	private void parseFile(String fileName) {
 		try {
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));

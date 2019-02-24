@@ -5,7 +5,7 @@ package edu.buffalo.cse.jive.finiteStateMachine.parser;
 
 import java.util.List;
 
-import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.Expression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
 
 /**
  * @author Shashank Raghunath

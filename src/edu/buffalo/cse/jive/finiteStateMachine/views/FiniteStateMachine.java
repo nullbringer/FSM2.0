@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.Expression;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Event;
 import edu.buffalo.cse.jive.finiteStateMachine.models.InputFileParser;
 import edu.buffalo.cse.jive.finiteStateMachine.models.TransitionBuilder;
@@ -52,11 +51,16 @@ import edu.buffalo.cse.jive.finiteStateMachine.monitor.Monitor;
 import edu.buffalo.cse.jive.finiteStateMachine.monitor.OfflineMonitor;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.Parser;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.TopDownParser;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
 import net.sourceforge.plantuml.SourceStringReader;
 
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
+ *
+ */
+/**
+ * The view of the FSM.
  *
  */
 public class FiniteStateMachine extends ViewPart {
@@ -74,12 +78,9 @@ public class FiniteStateMachine extends ViewPart {
 	private Text fileText;
 	private Combo attributeList;
 	private Button browseButton;
-//	private Button listenButton;
-//	private Button stopButton;
 	private Button validateButton;
 	private Button exportButton;
-	Composite imageComposite;
-	Composite image2Composite;
+	private Composite imageComposite;
 	private Image image;
 	public boolean horizontal;
 	public boolean vertical;
@@ -95,29 +96,26 @@ public class FiniteStateMachine extends ViewPart {
 	private Label kvSyntax;
 	private Label kvSpace;
 
-	Browser browser; // For svg support
+	private Browser browser; // For svg support
 	private Label canvasLabel;
 	private Label byLabel;
 	private Label statusLabel;
 	private Text hcanvasText;
 	private Text vcanvasText;
-	String svg;
 	private Label propertyLabel;
 	private Text propertyText;
-	private BlockingQueue<Event> incomingStates;
+	private BlockingQueue<Event> incomingEvents;
 	private SvgGenerator svgGenerator;
 	private TransitionBuilder transitionBuilder;
 	private Label errorText;
 	private Monitor monitor;
 
-	/**
-	 * The constructor.
-	 */
 	public FiniteStateMachine() {
 	}
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize it.
+	 * It's Eclipse SWT 3.x! Deal with it. As I did :D
 	 */
 	public void createPartControl(Composite parent) {
 
@@ -144,10 +142,6 @@ public class FiniteStateMachine extends ViewPart {
 		browseComposite.setLayout(new GridLayout(5, false));
 		browseComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-//		listenButton = new Button(browseComposite, SWT.PUSH);
-//		listenButton.setText("Listen");
-//		stopButton = new Button(browseComposite, SWT.PUSH);
-//		stopButton.setText("Stop");
 		browseButton = new Button(browseComposite, SWT.PUSH);
 		browseButton.setText("Browse");
 
@@ -251,11 +245,7 @@ public class FiniteStateMachine extends ViewPart {
 		imageComposite.setLayout(new GridLayout(1, false));
 		imageComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		// imageLabel = new Label(imageComposite,SWT.NONE);
 		browser = new Browser(imageComposite, SWT.NONE);
-		// canvas = new Canvas(imageComposite,SWT.NO_REDRAW_RESIZE);
-		// rootScrollComposite.setMinSize(mainComposite.computeSize(SWT.DEFAULT,
-		// SWT.DEFAULT));
 
 		// Ev2 composite
 		Composite ev2Composite = new Composite(mainComposite, SWT.NONE);
@@ -285,6 +275,7 @@ public class FiniteStateMachine extends ViewPart {
 		statusLabel = new Label(ev2Composite, SWT.FILL);
 		statusLabel.setText("StatusUpdate:");
 
+		// Initialize the SVGGenerator
 		svgGenerator = new SvgGenerator(hcanvasText, vcanvasText, browser, imageComposite, rootScrollComposite,
 				mainComposite, display);
 
@@ -344,7 +335,17 @@ public class FiniteStateMachine extends ViewPart {
 		});
 	}
 
-	private Set<String> readAttributes(Text attributes, Text abbreviations) {
+	/** Phew... */
+
+	/**
+	 * Reads Key Attributes and Abbreviations if present
+	 * 
+	 * @param attributes
+	 * @param abbreviations
+	 * @return set of keyAttributes
+	 * 
+	 */
+	private Set<String> readKeyAttributes(Text attributes, Text abbreviations) {
 		if (attributes != null && attributes.getText().length() > 0) {
 			Set<String> keyAttributes = new LinkedHashSet<String>();
 			String selected = attributes.getText();
@@ -353,7 +354,7 @@ public class FiniteStateMachine extends ViewPart {
 			}
 
 			if (abbreviations != null && abbreviations.getText().length() > 0) {
-				Event.map.clear();
+				Event.abbreviations.clear();
 				String[] tokens = abbreviations.getText().split(",");
 				if (tokens == null || tokens.length == 0)
 					throw new IllegalArgumentException("Invalid Abbreviations");
@@ -363,7 +364,7 @@ public class FiniteStateMachine extends ViewPart {
 						throw new IllegalArgumentException("Invalid Abbreviations");
 					String attribute = tks[0].trim();
 					if (keyAttributes.contains(attribute)) {
-						Event.map.put(attribute, tks[1].trim());
+						Event.abbreviations.put(attribute, tks[1].trim());
 					} else {
 						throw new IllegalArgumentException("Invalid Abbreviations");
 					}
@@ -374,6 +375,13 @@ public class FiniteStateMachine extends ViewPart {
 		throw new IllegalArgumentException("Please add atleast one attribute");
 	}
 
+	/**
+	 * Reads property text and parses them into a list of expressions
+	 * 
+	 * @param propertyText
+	 * @return List of expressions
+	 * @throws Exception
+	 */
 	private List<Expression> parseExpressions(Text propertyText) throws Exception {
 		if (propertyText != null && propertyText.getText().length() > 0) {
 			Parser parser = new TopDownParser();
@@ -383,10 +391,15 @@ public class FiniteStateMachine extends ViewPart {
 		throw new IllegalArgumentException("Please enter properties to validate");
 	}
 
+	/**
+	 * Validates and Draws the State Machine
+	 * 
+	 * @param e
+	 */
 	private void validateButtonAction(SelectionEvent e) {
 		errorText.setText("                                                                ");
 		try {
-			Set<String> fields = readAttributes(kvText, paText);
+			Set<String> keyAttributes = readKeyAttributes(kvText, paText);
 			List<Expression> expressions = null;
 			try {
 				expressions = parseExpressions(propertyText);
@@ -395,12 +408,12 @@ public class FiniteStateMachine extends ViewPart {
 				e3.printStackTrace();
 			}
 			if (expressions != null && expressions.size() > 0) {
-				monitor = new OfflineMonitor(fields, incomingStates);
+				monitor = new OfflineMonitor(keyAttributes, incomingEvents);
 				monitor.run();
 				if (monitor.validate(expressions)) {
-					errorText.setText("All properties satisfied.");
+					errorText.setText("All properties satisfied.                                 ");
 				}
-				transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates(), true);
+				transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates());
 				transitionBuilder.build();
 				svgGenerator.generate(transitionBuilder.getTransitions());
 				exportButton.setEnabled(true);
@@ -417,6 +430,11 @@ public class FiniteStateMachine extends ViewPart {
 		}
 	}
 
+	/**
+	 * Reads input file and processes all attributes and events
+	 * 
+	 * @param e
+	 */
 	private void browseButtonAction(SelectionEvent e) {
 		if (image != null) {
 			if (!image.isDisposed()) {
@@ -443,7 +461,7 @@ public class FiniteStateMachine extends ViewPart {
 		monitor = null;
 		InputFileParser inputFileParser = new InputFileParser(fileName);
 		Set<String> allAttributes = inputFileParser.getAllFields();
-		this.incomingStates = inputFileParser.getEvents();
+		this.incomingEvents = inputFileParser.getEvents();
 		for (String attribute : allAttributes) {
 			attributeList.add(attribute);
 		}
@@ -453,6 +471,11 @@ public class FiniteStateMachine extends ViewPart {
 		statusLineManager.setMessage("Loaded " + fileName);
 	}
 
+	/**
+	 * Exports the state machine into an svg file
+	 * 
+	 * @param e
+	 */
 	private void exportButtonAction(SelectionEvent e) {
 		SourceStringReader reader = new SourceStringReader(transitionBuilder.getTransitions());
 		FileDialog fd = new FileDialog(new Shell(Display.getCurrent()), SWT.SAVE);
@@ -477,6 +500,11 @@ public class FiniteStateMachine extends ViewPart {
 		statusLineManager.setMessage("Selected key attribute: " + keyVar);
 	}
 
+	/**
+	 * Adds attribute to key attributes
+	 * 
+	 * @param e
+	 */
 	private void addButtonAction(SelectionEvent e) {
 
 		String keyVar = attributeList.getText();
@@ -490,13 +518,18 @@ public class FiniteStateMachine extends ViewPart {
 		attributeList.setText("");
 	}
 
+	/**
+	 * Builds and draws the State Machine
+	 * 
+	 * @param e
+	 */
 	private void drawButtonAction(SelectionEvent e) {
 		errorText.setText("                                                                ");
 		try {
-			Set<String> fields = readAttributes(kvText, paText);
-			monitor = new OfflineMonitor(fields, incomingStates);
+			Set<String> keyAttributes = readKeyAttributes(kvText, paText);
+			monitor = new OfflineMonitor(keyAttributes, incomingEvents);
 			monitor.run();
-			transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates(), false);
+			transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates());
 			transitionBuilder.build();
 			svgGenerator.generate(transitionBuilder.getTransitions());
 			statusLineManager.setMessage("Finite State Model for " + kvText.getText());
@@ -506,6 +539,11 @@ public class FiniteStateMachine extends ViewPart {
 		}
 	}
 
+	/**
+	 * Resets key attributes, abbreviations, properties and errors
+	 * 
+	 * @param e
+	 */
 	private void resetButtonAction(SelectionEvent e) {
 		kvText.setText("");
 		paText.setText("");

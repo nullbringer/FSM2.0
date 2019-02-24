@@ -3,27 +3,32 @@ package edu.buffalo.cse.jive.finiteStateMachine.models;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.ValueExpression;
+
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
  *
  */
+/**
+ * The heart of the application.
+ *
+ */
 public class State {
 
-	private Map<String, ValueExpression> map;
+	private Map<String, ValueExpression> vector;
 	private boolean valid;
 
 	public State() {
 		this.valid = true;
-		this.map = new LinkedHashMap<>();
+		this.vector = new LinkedHashMap<>();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
-		for (String key : map.keySet()) {
-			stringBuilder.append(map.get(key));
+		for (String key : vector.keySet()) {
+			stringBuilder.append(vector.get(key));
 			stringBuilder.append(",");
 		}
 		return stringBuilder.substring(0, stringBuilder.length() - 1).toString();
@@ -40,18 +45,10 @@ public class State {
 	@Override
 	public int hashCode() {
 		int hash = 0;
-		for (String s : map.keySet()) {
-			hash ^= s.hashCode() ^ map.get(s).hashCode();
+		for (String s : vector.keySet()) {
+			hash ^= s.hashCode() ^ vector.get(s).hashCode();
 		}
 		return hash;
-	}
-
-	public Map<String, ValueExpression> getMap() {
-		return map;
-	}
-
-	public void setMap(Map<String, ValueExpression> map) {
-		this.map = map;
 	}
 
 	public boolean isValid() {
@@ -69,7 +66,16 @@ public class State {
 
 	public State copy() {
 		State state = new State();
-		state.setMap(new LinkedHashMap<String, ValueExpression>(map));
+		state.setVector(new LinkedHashMap<String, ValueExpression>(vector));
 		return state;
 	}
+
+	public Map<String, ValueExpression> getVector() {
+		return vector;
+	}
+
+	public void setVector(Map<String, ValueExpression> vector) {
+		this.vector = vector;
+	}
+
 }

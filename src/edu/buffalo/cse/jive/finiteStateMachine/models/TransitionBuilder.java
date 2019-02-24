@@ -5,9 +5,15 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.buffalo.cse.jive.finiteStateMachine.util.Pair;
+
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
+ *
+ */
+/**
+ * Given the adjacency list and the root state, builds the String required for
+ * SVG generator.
  *
  */
 public class TransitionBuilder {
@@ -15,17 +21,15 @@ public class TransitionBuilder {
 	private StringBuilder transitions;
 	private State rootState;
 	private Map<State, Set<State>> states;
-	private boolean checkValidity;
 
-	public TransitionBuilder(State rootState, Map<State, Set<State>> states, boolean checkValidity) {
+	public TransitionBuilder(State rootState, Map<State, Set<State>> states) {
 		transitions = new StringBuilder();
 		transitions.append("@startuml\n");
 		this.rootState = rootState;
 		this.states = states;
-		this.checkValidity = checkValidity;
 	}
 
-	public void addInitialState(State state, boolean result) {
+	private void addInitialState(State state, boolean result) {
 		if (result)
 			this.transitions.append("(*) --> " + "\"" + state.toString() + "\"");
 		else
@@ -37,13 +41,7 @@ public class TransitionBuilder {
 		return new StringBuilder(transitions).append("@enduml\n").toString();
 	}
 
-	public void addTransition(State state1, State state2) {
-		String s = "\"" + state1.toString() + "\"" + " --> " + "\"" + state2.toString() + "\"";
-		this.transitions.append(s);
-		addNewLine();
-	}
-
-	public void addTransition(State state1, State state2, boolean result) {
+	private void addTransition(State state1, State state2, boolean result) {
 		if (!result) {
 			addColorTransition(state1, state2, "red");
 		} else {
@@ -53,7 +51,7 @@ public class TransitionBuilder {
 		}
 	}
 
-	public void addColorTransition(State state1, State state2, String color) {
+	private void addColorTransition(State state1, State state2, String color) {
 		String s = "\"" + state1.toString() + "\"" + " --> " + "\"" + state2.toString() + "\"" + " #" + color;
 		this.transitions.append(s);
 		addNewLine();
@@ -64,11 +62,7 @@ public class TransitionBuilder {
 	}
 
 	public void build() {
-		if (checkValidity) {
-			addInitialState(rootState, rootState.isValid());
-		} else {
-			addInitialState(rootState, true);
-		}
+		addInitialState(rootState, rootState.isValid());
 		buildTransitions(null, rootState, new HashSet<Pair<State, State>>());
 	}
 
@@ -76,12 +70,7 @@ public class TransitionBuilder {
 		for (State next : states.get(curr))
 			if (visited.add(new Pair<State, State>(curr, next)))
 				buildTransitions(curr, next, visited);
-		if (checkValidity) {
-			if (prev != null)
-				addTransition(prev, curr, curr.isValid());
-		} else {
-			if (prev != null)
-				addTransition(prev, curr, true);
-		}
+		if (prev != null)
+			addTransition(prev, curr, curr.isValid());
 	}
 }

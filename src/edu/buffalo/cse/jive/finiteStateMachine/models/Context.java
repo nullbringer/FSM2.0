@@ -2,9 +2,15 @@ package edu.buffalo.cse.jive.finiteStateMachine.models;
 
 import java.util.Map;
 import java.util.Set;
+
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
+ *
+ */
+/**
+ * Context of the state. Pass in current state, next state and the adjacency
+ * list
  *
  */
 public class Context {

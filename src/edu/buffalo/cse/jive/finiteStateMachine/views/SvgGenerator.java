@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Text;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
+
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
@@ -41,6 +42,11 @@ public class SvgGenerator {
 		this.vcanvasText = vcanvasText;
 	}
 
+	/**
+	 * Give a source string, generates a plant-uml diagram
+	 * 
+	 * @param source
+	 */
 	public void generate(String source) {
 		SourceStringReader reader = new SourceStringReader(source);
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -56,8 +62,8 @@ public class SvgGenerator {
 
 			@Override
 			public void run() {
-				browserLData.widthHint = Integer.parseInt(hcanvasText.getText()); // 1000;
-				browserLData.heightHint = Integer.parseInt(vcanvasText.getText()); // 600;
+				browserLData.widthHint = Integer.parseInt(hcanvasText.getText());
+				browserLData.heightHint = Integer.parseInt(vcanvasText.getText());
 				browser.setLayoutData(browserLData);
 				browser.setText(svg);
 				imageComposite.pack();

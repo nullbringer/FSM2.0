@@ -3,32 +3,32 @@ package edu.buffalo.cse.jive.finiteStateMachine.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.buffalo.cse.jive.finiteStateMachine.expression.arithmetic.AdditionExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.arithmetic.DivisionExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.arithmetic.MultiplicationExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.arithmetic.SubtractionExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.core.ImplicationExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.core.PrimeVariableExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.core.VariableExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.expression.Expression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.logical.AndExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.logical.NotExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.logical.OrExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.EqualityExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.GreaterThanEqualToExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.GreaterThanExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.LessThanEqualToExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.LessThanExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.relational.NotEqualityExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.EExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.FExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.GExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.UExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.temporal.XExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.value.DoubleValueExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.value.IntegerValueExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.value.StringValueExpression;
-import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.arithmetic.AdditionExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.arithmetic.DivisionExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.arithmetic.MultiplicationExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.arithmetic.SubtractionExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.ImplicationExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.PrimeVariableExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.VariableExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.logical.AndExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.logical.NotExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.logical.OrExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.relational.EqualityExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.relational.GreaterThanEqualToExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.relational.GreaterThanExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.relational.LessThanEqualToExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.relational.LessThanExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.relational.NotEqualityExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.EExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.FExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.GExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.UExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.XExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.DoubleValueExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.IntegerValueExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.StringValueExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.ValueExpression;
 
 /**
  * @author Bharat Jayaraman
@@ -36,6 +36,10 @@ import edu.buffalo.cse.jive.finiteStateMachine.expression.value.ValueExpression;
  * 
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
+ *
+ */
+/**
+ * TopDownParser - Ask the Professor about this.
  *
  */
 public class TopDownParser implements Parser {
