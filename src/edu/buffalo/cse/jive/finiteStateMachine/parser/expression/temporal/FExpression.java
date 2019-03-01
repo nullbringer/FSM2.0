@@ -40,8 +40,12 @@ public class FExpression extends UnaryExpression<Expression> {
 	 */
 	private boolean evaluate(State prev, State curr, Set<State> visited, Map<State, Set<State>> states) {
 		boolean currentResult = true;
-		for (State next : states.get(curr)) {
-			currentResult = getExpression().evaluate(new Context(curr, next, states)) && currentResult;
+		if (!states.get(curr).isEmpty()) {
+			for (State next : states.get(curr)) {
+				currentResult = getExpression().evaluate(new Context(curr, next, states)) && currentResult;
+			}
+		} else {
+			currentResult = getExpression().evaluate(new Context(curr, null, states)) && currentResult;
 		}
 		if (!currentResult && visited.add(curr)) {
 			boolean childResult = currentResult;
