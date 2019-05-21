@@ -17,10 +17,16 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.ValueExpr
 public class State {
 
 	private Map<String, ValueExpression> vector;
-	private boolean valid;
+	private Status status;
+	
+	public enum Status{
+		MARKED,
+		VALID,
+		INVALID
+	}
 
 	public State() {
-		this.valid = true;
+		this.status = Status.VALID;
 		this.vector = new LinkedHashMap<>();
 	}
 
@@ -50,18 +56,19 @@ public class State {
 		}
 		return hash;
 	}
-
-	public boolean isValid() {
-		return valid;
+	
+	public Status getStatus() {
+		return status;
 	}
 
-	public void setValid(boolean valid) {
-		if (this.valid)
-			this.valid = valid;
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
+	
+	
 	public void reset() {
-		this.valid = true;
+		this.status = Status.VALID;
 	}
 
 	public State copy() {

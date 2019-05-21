@@ -9,6 +9,7 @@ import java.util.Set;
 
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State;
+import edu.buffalo.cse.jive.finiteStateMachine.models.State.Status;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.UnaryExpression;
 
@@ -48,7 +49,8 @@ public class GExpression extends UnaryExpression<Expression> {
 		} else {
 			currentResult = getExpression().evaluate(new Context(curr, null, states)) && currentResult;
 		}
-		curr.setValid(currentResult);
+		if(currentResult)curr.setStatus(Status.VALID);
+		else curr.setStatus(Status.INVALID);
 		if (visited.add(curr)) {
 			for (State next : states.get(curr)) {
 				currentResult = evaluate(curr, next, visited, states) && currentResult;

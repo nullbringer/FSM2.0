@@ -10,6 +10,7 @@ import java.util.concurrent.BlockingQueue;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Event;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State;
+import edu.buffalo.cse.jive.finiteStateMachine.models.State.Status;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
 
 /**
@@ -94,7 +95,8 @@ public abstract class Monitor implements Runnable {
 	 */
 	public boolean validate(List<Expression> expressions) throws Exception {
 		boolean result = validate(rootState, expressions);
-		rootState.setValid(result);
+		if(result)rootState.setStatus(Status.VALID);
+		else rootState.setStatus(Status.INVALID);
 		return result;
 	}
 
