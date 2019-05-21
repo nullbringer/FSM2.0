@@ -61,11 +61,11 @@ public class TransitionBuilder {
 		addNewLine();
 	}
 	
-	private void addColorTransitionWithArrowBetweenSameStates(State state1, State state2, String color) {
+	private void addColorTransitionWithArrowBetweenSameStates(State state1, State state2, String backgroundColor, String arrowColor) {
 		String s = "\"" + state1.toString() + "\"";
-		if(state1.isValid() == state2.isValid()) s+= " -[#" + color + "]-> ";
+		if(state1.isValid() == state2.isValid() && !state2.equals(rootState)) s+= " -[#" + arrowColor + "]-> ";
 		else s += " --> ";
-		s += "\"" + state2.toString() + "\"" + " #" + color;
+		s += "\"" + state2.toString() + "\"" + " #" + backgroundColor;
 		this.transitions.append(s);
 		addNewLine();
 	}
@@ -101,7 +101,7 @@ public class TransitionBuilder {
 			if (visited.add(new Pair<State, State>(curr, next)))
 				buildValidEETransitions(curr, next, visited);
 		if (prev != null) {
-			if(curr.isValid())addColorTransitionWithArrowBetweenSameStates(prev, curr, "green");
+			if(curr.isValid())addColorTransitionWithArrowBetweenSameStates(prev, curr, "LimeGreen","green");
 			else addNoColorTransition(prev, curr);
 		}
 	}
