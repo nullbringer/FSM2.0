@@ -45,10 +45,14 @@ public class TransitionBuilder {
 		if (!result) {
 			addColorTransition(state1, state2, "red");
 		} else {
-			String s = "\"" + state1.toString() + "\"" + " --> " + "\"" + state2.toString() + "\"";
-			this.transitions.append(s);
-			addNewLine();
+			addNoColorTransition(state1, state2);
 		}
+	}
+	
+	private void addNoColorTransition(State state1, State state2) {
+		String s = "\"" + state1.toString() + "\"" + " --> " + "\"" + state2.toString() + "\"";
+		this.transitions.append(s);
+		addNewLine();
 	}
 
 	private void addColorTransition(State state1, State state2, String color) {
@@ -56,7 +60,16 @@ public class TransitionBuilder {
 		this.transitions.append(s);
 		addNewLine();
 	}
-
+	
+	private void addColorTransitionWithArrowBetweenSameStates(State state1, State state2, String color) {
+		String s = "\"" + state1.toString() + "\"";
+		if(state1.isValid() == state2.isValid()) s+= " -[#" + color + "]-> ";
+		else s += " --> ";
+		s += "\"" + state2.toString() + "\"" + " #" + color;
+		this.transitions.append(s);
+		addNewLine();
+	}
+	
 	private void addNewLine() {
 		this.transitions.append("\n");
 	}
@@ -72,5 +85,24 @@ public class TransitionBuilder {
 				buildTransitions(curr, next, visited);
 		if (prev != null)
 			addTransition(prev, curr, curr.isValid());
+	}
+
+	public void eeBuild() {
+		if(!rootState.isValid())build();
+		else {
+			addInitialState(rootState, rootState.isValid());
+			buildValidEETransitions(null, rootState, new HashSet<Pair<State, State>>());
+		}
+		
+	}
+	
+	private void buildValidEETransitions(State prev, State curr, Set<Pair<State, State>> visited) {
+		for (State next : states.get(curr))
+			if (visited.add(new Pair<State, State>(curr, next)))
+				buildValidEETransitions(curr, next, visited);
+		if (prev != null) {
+			if(curr.isValid())addColorTransitionWithArrowBetweenSameStates(prev, curr, "green");
+			else addNoColorTransition(prev, curr);
+		}
 	}
 }

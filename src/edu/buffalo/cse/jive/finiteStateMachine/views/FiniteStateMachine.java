@@ -52,6 +52,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.monitor.OfflineMonitor;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.Parser;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.TopDownParser;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.EExpression;
 import net.sourceforge.plantuml.SourceStringReader;
 
 /**
@@ -414,7 +415,11 @@ public class FiniteStateMachine extends ViewPart {
 					errorText.setText("All properties satisfied.                                 ");
 				}
 				transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates());
-				transitionBuilder.build();
+				if(expressions.get(0) instanceof EExpression) {
+					transitionBuilder.eeBuild();
+				} else {
+					transitionBuilder.build();
+				}
 				svgGenerator.generate(transitionBuilder.getTransitions());
 				exportButton.setEnabled(true);
 			}
