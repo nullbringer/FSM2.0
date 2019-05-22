@@ -12,6 +12,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.Event;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State.Status;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.EExpression;
 
 /**
  * @author Shashank Raghunath
@@ -95,7 +96,8 @@ public abstract class Monitor implements Runnable {
 	 */
 	public boolean validate(List<Expression> expressions) throws Exception {
 		boolean result = validate(rootState, expressions);
-		if(result)rootState.setStatus(Status.VALID);
+		if(result && expressions.get(0) instanceof EExpression)rootState.setStatus(Status.MARKED);
+		else if(result)rootState.setStatus(Status.VALID);
 		else rootState.setStatus(Status.INVALID);
 		return result;
 	}
@@ -119,6 +121,7 @@ public abstract class Monitor implements Runnable {
 		for (Expression expression : expressions) {
 			valid = expression.evaluate(new Context(root, null, states)) && valid;
 		}
+		
 		return valid;
 	}
 

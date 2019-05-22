@@ -14,6 +14,8 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.State;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State.Status;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.UnaryExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.util.Pair;
+import edu.buffalo.cse.jive.finiteStateMachine.util.ShortestPathHolderForEExpression;
 
 /**
  * @author Shashank Raghunath
@@ -33,9 +35,9 @@ public class EExpression extends UnaryExpression<Expression> {
 	}
 
 	/**
-	 * EF Expression Implementation - Traverses the whole graph and returns the shortest path to the valid state as true.
-	 * marks others as invalid
-	 * Marks root state as invalid if all child states are invalid
+	 * EF Expression Implementation - Traverses the whole graph and returns if any
+	 * state is true. Marks state as invalid if all child states are invalid.
+	 * Finds the shortest path to the target
 	 * 
 	 * @param prev
 	 * @param curr
@@ -69,14 +71,16 @@ public class EExpression extends UnaryExpression<Expression> {
 		
 		if(!currentResult) return currentResult;	
 		List<State> shortestPathList = constuctShortestPath(targetState, visited, states);
-		//TODO: inclide mark in same function
-		markStates(shortestPathList, states);
+		
+		
+		markStatesInPath(shortestPathList, states);
 		
 		return currentResult;
 	}
 	
 	private List<State> constuctShortestPath(State targetState, Stack<State> visited, Map<State, Set<State>> states) {
 		List<State> shortestPathList = new ArrayList<State>();
+		List<Pair<State, State>> pathPairs = new ArrayList<Pair<State,State>>();
 		shortestPathList.add(targetState);
 		
 		while(!visited.isEmpty())
@@ -84,19 +88,22 @@ public class EExpression extends UnaryExpression<Expression> {
 			State sourceNode = visited.pop();
 			for (State sourceChild : states.get(sourceNode)){
 				if(sourceChild.equals(targetState)) {
+					pathPairs.add(new Pair<State, State>(sourceNode, sourceChild));
 					shortestPathList.add(sourceNode);
 					targetState = sourceNode;
 					break;	
 				}
 			}
 		}
+		
+		ShortestPathHolderForEExpression.setPath(pathPairs);
+		
 		return shortestPathList;
 	}
-	private void markStates(List<State> shortestPathList, Map<State, Set<State>> states) {
+	private void markStatesInPath(List<State> shortestPathList, Map<State, Set<State>> states) {
 		for (Set<State> childList : states.values()) {
 		    for(State state:childList) {
 		    	if(shortestPathList.contains(state))state.setStatus(Status.MARKED);
-		    	else state.setStatus(Status.VALID);
 		    }
 		}
 	}

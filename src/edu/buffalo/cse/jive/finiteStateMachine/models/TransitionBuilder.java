@@ -1,11 +1,14 @@
 package edu.buffalo.cse.jive.finiteStateMachine.models;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import edu.buffalo.cse.jive.finiteStateMachine.models.State.Status;
 import edu.buffalo.cse.jive.finiteStateMachine.util.Pair;
+import edu.buffalo.cse.jive.finiteStateMachine.util.ShortestPathHolderForEExpression;
 
 /**
  * @author Shashank Raghunath
@@ -63,13 +66,18 @@ public class TransitionBuilder {
 	}
 	
 	private void addColorTransitionWithArrowBetweenSameStates(State state1, State state2, String backgroundColor, String arrowColor) {
+		
+		Pair<State, State> pair = new Pair<State, State>(state1, state2);
+		
 		String s = "\"" + state1.toString() + "\"";
-		if(state1.getStatus().equals(state2.getStatus()) && !state2.equals(rootState)) s+= " -[#" + arrowColor + "]-> ";
+		if(ShortestPathHolderForEExpression.getPath().contains(pair)) 
+			s+= " -[#" + arrowColor + "]-> ";
 		else s += " --> ";
 		s += "\"" + state2.toString() + "\"" + " #" + backgroundColor;
 		this.transitions.append(s);
 		addNewLine();
 	}
+
 
 	private void addNewLine() {
 		this.transitions.append("\n");
@@ -77,16 +85,26 @@ public class TransitionBuilder {
 
 	public void build() {
 		addInitialState(rootState, rootState.getStatus());
-		buildTransitions(null, rootState, new HashSet<Pair<State, State>>());
+//		buildTransitions(null, rootState, new HashSet<Pair<State, State>>());
+		buildTransitions(rootState);
 	}
-
-	private void buildTransitions(State prev, State curr, Set<Pair<State, State>> visited) {
-		for (State next : states.get(curr))
-			if (visited.add(new Pair<State, State>(curr, next)))
-				buildTransitions(curr, next, visited);
-		if (prev != null) {
-			if(curr.getStatus().equals(Status.MARKED))addColorTransitionWithArrowBetweenSameStates(prev, curr, "LimeGreen","green");
-			else addTransition(prev, curr, curr.getStatus());
+	
+	private void buildTransitions(State rootState) {	
+		Queue<State> toBeVisited = new LinkedList<State>();
+		Set<Pair<State, State>> traversedPath =  new HashSet<Pair<State, State>>();
+		Set<State> visited = new HashSet<State>();
+		toBeVisited.add(rootState);
+		while(!toBeVisited.isEmpty()){
+			State curr = toBeVisited.poll();
+			for (State next : states.get(curr)){
+				if (traversedPath.add(new Pair<State, State>(curr, next))) {
+					if(next.getStatus().equals(Status.MARKED))
+						addColorTransitionWithArrowBetweenSameStates(curr,next, "LimeGreen","green");
+					else 
+						addTransition(curr, next, next.getStatus());
+					if(visited.add(next))toBeVisited.add(next);
+				}	
+			}	
 		}
 	}
 
