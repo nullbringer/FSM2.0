@@ -1,10 +1,14 @@
 package edu.buffalo.cse.jive.finiteStateMachine.models;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
+import edu.buffalo.cse.jive.finiteStateMachine.models.State.Status;
 import edu.buffalo.cse.jive.finiteStateMachine.util.Pair;
+import edu.buffalo.cse.jive.finiteStateMachine.util.ShortestPathHolderForEExpression;
 
 /**
  * @author Shashank Raghunath
@@ -29,8 +33,8 @@ public class TransitionBuilder {
 		this.states = states;
 	}
 
-	private void addInitialState(State state, boolean result) {
-		if (result)
+	private void addInitialState(State state, Status status) {
+		if (status.equals(Status.VALID))
 			this.transitions.append("(*) --> " + "\"" + state.toString() + "\"");
 		else
 			this.transitions.append("(*) --> " + "\"" + state.toString() + "\"" + " #red");
@@ -41,13 +45,11 @@ public class TransitionBuilder {
 		return new StringBuilder(transitions).append("@enduml\n").toString();
 	}
 
-	private void addTransition(State state1, State state2, boolean result) {
-		if (!result) {
+	private void addTransition(State state1, State state2, Status status) {
+		if (status.equals(Status.INVALID)) {
 			addColorTransition(state1, state2, "red");
 		} else {
-			String s = "\"" + state1.toString() + "\"" + " --> " + "\"" + state2.toString() + "\"";
-			this.transitions.append(s);
-			addNewLine();
+			addNoColorTransition(state1, state2);
 		}
 	}
 
@@ -56,21 +58,54 @@ public class TransitionBuilder {
 		this.transitions.append(s);
 		addNewLine();
 	}
+	
+	private void addNoColorTransition(State state1, State state2) {
+		String s = "\"" + state1.toString() + "\"" + " --> " + "\"" + state2.toString() + "\"";
+		this.transitions.append(s);
+		addNewLine();
+	}
+	
+	private void addColorTransitionWithArrowBetweenSameStates(State state1, State state2, String backgroundColor, String arrowColor) {
+		
+		Pair<State, State> pair = new Pair<State, State>(state1, state2);
+		
+		String s = "\"" + state1.toString() + "\"";
+		if(ShortestPathHolderForEExpression.getPath().contains(pair)) 
+			s+= " -[#" + arrowColor + "]-> ";
+		else s += " --> ";
+		s += "\"" + state2.toString() + "\"" + " #" + backgroundColor;
+		this.transitions.append(s);
+		addNewLine();
+	}
+
 
 	private void addNewLine() {
 		this.transitions.append("\n");
 	}
 
 	public void build() {
-		addInitialState(rootState, rootState.isValid());
-		buildTransitions(null, rootState, new HashSet<Pair<State, State>>());
+		addInitialState(rootState, rootState.getStatus());
+//		buildTransitions(null, rootState, new HashSet<Pair<State, State>>());
+		buildTransitions(rootState);
+	}
+	
+	private void buildTransitions(State rootState) {	
+		Queue<State> toBeVisited = new LinkedList<State>();
+		Set<Pair<State, State>> traversedPath =  new HashSet<Pair<State, State>>();
+		Set<State> visited = new HashSet<State>();
+		toBeVisited.add(rootState);
+		while(!toBeVisited.isEmpty()){
+			State curr = toBeVisited.poll();
+			for (State next : states.get(curr)){
+				if (traversedPath.add(new Pair<State, State>(curr, next))) {
+					if(next.getStatus().equals(Status.MARKED))
+						addColorTransitionWithArrowBetweenSameStates(curr,next, "LimeGreen","green");
+					else 
+						addTransition(curr, next, next.getStatus());
+					if(visited.add(next))toBeVisited.add(next);
+				}	
+			}	
+		}
 	}
 
-	private void buildTransitions(State prev, State curr, Set<Pair<State, State>> visited) {
-		for (State next : states.get(curr))
-			if (visited.add(new Pair<State, State>(curr, next)))
-				buildTransitions(curr, next, visited);
-		if (prev != null)
-			addTransition(prev, curr, curr.isValid());
-	}
 }

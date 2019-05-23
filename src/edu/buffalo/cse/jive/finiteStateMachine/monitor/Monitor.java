@@ -10,7 +10,9 @@ import java.util.concurrent.BlockingQueue;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Event;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State;
+import edu.buffalo.cse.jive.finiteStateMachine.models.State.Status;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.EExpression;
 
 /**
  * @author Shashank Raghunath
@@ -94,7 +96,9 @@ public abstract class Monitor implements Runnable {
 	 */
 	public boolean validate(List<Expression> expressions) throws Exception {
 		boolean result = validate(rootState, expressions);
-		rootState.setValid(result);
+		if(result && expressions.get(0) instanceof EExpression)rootState.setStatus(Status.MARKED);
+		else if(result)rootState.setStatus(Status.VALID);
+		else rootState.setStatus(Status.INVALID);
 		return result;
 	}
 
@@ -114,9 +118,12 @@ public abstract class Monitor implements Runnable {
 	 */
 	private boolean validate(State root, List<Expression> expressions) {
 		boolean valid = true;
+		Context thisContext = new Context(root, null, states);
+		if(expressions.get(0) instanceof EExpression)thisContext = new Context(root, null, states,true);
 		for (Expression expression : expressions) {
-			valid = expression.evaluate(new Context(root, null, states)) && valid;
+			valid = expression.evaluate(thisContext) && valid;
 		}
+		
 		return valid;
 	}
 

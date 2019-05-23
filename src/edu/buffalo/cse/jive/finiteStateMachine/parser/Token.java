@@ -42,6 +42,14 @@ class Token {
 	public static final int N_INT_LIT = 31;
 	public static final int STRING_LIT = 32;
 	public static final int E_OP = 33;
+	public static final int IN_OP = 34;
+	public static final int DOT_OP = 35;
+	public static final int APPEND_OP=36;
+	public static final int SIZE_OP=37;
+	public static final int MIN_OP=38;
+	public static final int MAX_OP=39;
+	public static final int HASH_OP=40;
+	
 
 	private static String[] lexemes = { ";", ",", "+", "-", "*", "/", "=", ">", "<", "<=", ">=", "==", "!=", "(", ")",
 			"{", "}", "id", "int_lit", "&&", "||", "->", "F", "G", "U", "X", "[", "]", "!", "end", "'" };
