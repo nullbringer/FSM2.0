@@ -6,11 +6,12 @@ import java.util.List;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
 
-public class ListValueExpression extends Expression implements Comparable<ListValueExpression>{
+public class ListValueExpression extends Expression implements Comparable<ListValueExpression> {
 
 	List<?> listValue = new ArrayList<>();
 	String id;
 	boolean isListVar;
+	boolean isPrime;
 
 	public ListValueExpression(List<?> listValue) {
 		this.listValue = listValue;
@@ -19,9 +20,10 @@ public class ListValueExpression extends Expression implements Comparable<ListVa
 	public ListValueExpression() {
 	}
 
-	public ListValueExpression(String id, boolean isListVar) {
+	public ListValueExpression(String id, boolean isListVar, boolean isPrime) {
 		this.id = id;
 		this.isListVar = isListVar;
+		this.isPrime = isPrime;
 	}
 
 	public List<?> getListValue() {
@@ -73,7 +75,37 @@ public class ListValueExpression extends Expression implements Comparable<ListVa
 	@Override
 	public Boolean evaluate(Context context) {
 		// TODO Auto-generated method stub
-		if (context.getCurrentState().getVector().get(id) != null) {
+		if (isPrime) {
+			if (context.getNextState().getVector().get(id) != null) {
+				List<Integer> intList = new ArrayList<>();
+				List<String> stringList = new ArrayList<>();
+				String variableValue = (String) context.getNextState().getVector().get(id).getValue();
+				if (variableValue.charAt(0) == '[') {
+					String[] listValue = variableValue.split(" |\\]|\\[");
+					for (int i = 0; i < listValue.length; i++) {
+						if (!(listValue[i].equals("") || listValue[i].equals("[") || listValue[i].equals("]"))) {
+							if (listValue[i].charAt(0) == '-' || listValue[i].charAt(0) == '0'
+									|| listValue[i].charAt(0) == '1' || listValue[i].charAt(0) == '2'
+									|| listValue[i].charAt(0) == '3' || listValue[i].charAt(0) == '4'
+									|| listValue[i].charAt(0) == '5' || listValue[i].charAt(0) == '6'
+									|| listValue[i].charAt(0) == '7' || listValue[i].charAt(0) == '8'
+									|| listValue[i].charAt(0) == '9') {
+								intList.add(Integer.parseInt(listValue[i]));
+							} else {
+								stringList.add(listValue[i]);
+							}
+
+						}
+					}
+					if (intList.size() > stringList.size()) {
+						this.listValue = intList;
+					} else {
+						this.listValue = stringList;
+					}
+				}
+			}
+
+		} else if (context.getCurrentState().getVector().get(id) != null) {
 			List<Integer> intList = new ArrayList<>();
 			List<String> stringList = new ArrayList<>();
 			String variableValue = (String) context.getCurrentState().getVector().get(id).getValue();
@@ -107,16 +139,14 @@ public class ListValueExpression extends Expression implements Comparable<ListVa
 
 	@Override
 	public int compareTo(ListValueExpression listValueExpression) {
-		if(this.listValue.hashCode() == listValueExpression.hashCode()) {
+		if (this.listValue.hashCode() == listValueExpression.hashCode()) {
 			return 0;
-		}
-		else if(this.listValue.hashCode() > listValueExpression.hashCode()) {
+		} else if (this.listValue.hashCode() > listValueExpression.hashCode()) {
 			return 1;
-		}
-		else {
+		} else {
 			return -1;
 		}
-		
+
 	}
 
 }
