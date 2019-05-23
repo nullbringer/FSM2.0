@@ -199,7 +199,7 @@ public class Lexer {
 				ch = buffer.getChar();
 				break;
 			case '\"':
-				ident();
+				stringIdent();
 				setNextToken(Token.STRING_LIT);
 				break;
 			default:
@@ -233,13 +233,12 @@ public class Lexer {
 		ident = "";
 		do {
 			ident = ident + ch;
-			if(ch == ']')
-			{
-				ident = ident + '\"';
-				break;
-			}
 			ch = buffer.getChar();
-		} while (Character.isLetter(ch) || Character.isDigit(ch) || Character.isWhitespace(ch) || ch == '\"' || ch == '_' || ch == '.' || ch == ':' || ch == '[' || ch == ']');
+		} while (Character.isLetter(ch) || Character.isDigit(ch) || Character.isWhitespace(ch) || ch == '_' || ch == '.' || ch == ':' || ch == '[' || ch == ']');
+		if(ch == '\"') {
+			ident = ident + ch;
+			ch = buffer.getChar();
+		}
 		return ident;
 	}
 
