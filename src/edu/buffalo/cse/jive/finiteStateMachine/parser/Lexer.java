@@ -59,6 +59,18 @@ public class Lexer {
 			case "end":
 				nextToken = Token.KEY_END;
 				break;
+			case "in":
+				nextToken = Token.IN_OP;
+				break;
+			case "size":
+				nextToken = Token.SIZE_OP;
+				break;
+			case "min":
+				nextToken = Token.MIN_OP;
+				break;
+			case "max":
+				nextToken = Token.MAX_OP;
+				break;
 			default:
 				nextToken = Token.ID;
 			}
@@ -81,7 +93,18 @@ public class Lexer {
 				ch = buffer.getChar();
 				break;
 			case '+':
-				nextToken = Token.ADD_OP;
+
+				ch = buffer.getChar();
+				if (ch == '+') {
+					nextToken = Token.APPEND_OP;
+					ch = buffer.getChar();
+
+				} else {
+					nextToken = Token.ADD_OP;
+				}
+				break;
+			case '.':
+				nextToken = Token.DOT_OP;
 				ch = buffer.getChar();
 				break;
 			case '-':
@@ -167,6 +190,10 @@ public class Lexer {
 				nextToken = Token.LEFT_BOX;
 				ch = buffer.getChar();
 				break;
+			case '#':
+				nextToken = Token.HASH_OP;
+				ch = buffer.getChar();
+				break;
 			case ']':
 				nextToken = Token.RIGHT_BOX;
 				ch = buffer.getChar();
@@ -199,6 +226,20 @@ public class Lexer {
 			ident = ident + ch;
 			ch = buffer.getChar();
 		} while (Character.isLetter(ch) || Character.isDigit(ch) || ch == '\"' || ch == '_' || ch == '.' || ch == ':');
+		return ident;
+	}
+	
+	private String stringIdent() throws Exception {
+		ident = "";
+		do {
+			ident = ident + ch;
+			if(ch == ']')
+			{
+				ident = ident + '\"';
+				break;
+			}
+			ch = buffer.getChar();
+		} while (Character.isLetter(ch) || Character.isDigit(ch) || Character.isWhitespace(ch) || ch == '\"' || ch == '_' || ch == '.' || ch == ':' || ch == '[' || ch == ']');
 		return ident;
 	}
 
