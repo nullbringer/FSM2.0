@@ -13,6 +13,9 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.arithmetic.Subt
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.ImplicationExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.ListMaxExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.ListMinExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.ListPrimeMaxExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.ListPrimeMinExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.ListPrimeSizeExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.ListSizeExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.PrimeSubscriptExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.core.PrimeVariableExpression;
@@ -301,7 +304,7 @@ class Rel { // relexp -> expr ('<' | '>' | '<=' | '>=' | '==' | '!= ' | 'in')
 					if (e1.getExpression() == null || e2.getExpression() == null) {
 						throw new IllegalArgumentException("Syntax Error in Properties");
 					}
-					if(e2.getExpression() instanceof ValueExpression) {
+					if (e2.getExpression() instanceof ValueExpression) {
 						throw new IllegalArgumentException("In operator cannot have string literals");
 					}
 					expression = new InExpression((ValueExpression) e1.getExpression(),
@@ -470,7 +473,7 @@ class Factor { // factor -> int_ | id | '(' expr ')' ************ list literal [
 			lexer.lex();
 			if (lexer.getNextToken() == Token.PRIME_OP) {
 				lexer.lex();
-				expression = new PrimeVariableExpression(id, null);
+				
 
 				if (lexer.getNextToken() == Token.LEFT_BOX) {
 
@@ -482,11 +485,46 @@ class Factor { // factor -> int_ | id | '(' expr ')' ************ list literal [
 					lexer.lex(); // skip over ')'
 					expression = new PrimeSubscriptExpression(id, (ValueExpression) e.getExpression());
 
-				} /*
-					 * else if (lexer.getNextToken() == Token.DOT_OP) {
-					 * 
-					 * }
-					 */
+				} else if (lexer.getNextToken() == Token.HASH_OP) {
+
+					if (listIdFlag) {
+						throw new IllegalArgumentException("Syntax Error in Properties");
+					} else {
+						lexer.lex();
+						switch (lexer.getNextToken()) {
+
+						case Token.SIZE_OP:
+							lexer.lex();
+							expression = new ListPrimeSizeExpression(id);
+							break;
+						case Token.MIN_OP:
+							lexer.lex();
+							expression = new ListPrimeMinExpression(id);
+							break;
+						case Token.MAX_OP:
+							lexer.lex();
+							expression = new ListPrimeMaxExpression(id);
+							break;
+						default:
+							throw new IllegalArgumentException("Syntax Error in Properties");
+
+						}
+
+					}
+
+				} else if (listIdFlag) {
+					expression = new ListValueExpression(id, listIdFlag, true);
+					if (lexer.getNextToken() == Token.APPEND_OP) {
+						lexer.lex();
+						e = new Expr(lexer, listIdFlag);
+						expression = new Append((ListValueExpression) expression,
+								(ListValueExpression) e.getExpression());
+					}
+
+				}
+				else {
+					expression = new PrimeVariableExpression(id, null);
+				}
 
 			} else if (lexer.getNextToken() == Token.LEFT_BOX) {
 				if (listIdFlag) {
@@ -532,7 +570,7 @@ class Factor { // factor -> int_ | id | '(' expr ')' ************ list literal [
 
 			} else {
 				if (listIdFlag) {
-					expression = new ListValueExpression(id, listIdFlag);
+					expression = new ListValueExpression(id, listIdFlag , false);
 					if (lexer.getNextToken() == Token.APPEND_OP) {
 						lexer.lex();
 						e = new Expr(lexer, listIdFlag);
@@ -560,7 +598,7 @@ class Factor { // factor -> int_ | id | '(' expr ')' ************ list literal [
 			break;
 		case Token.LEFT_BOX:
 			throw new IllegalArgumentException("Enclose the list inside double quotes");
-			
+
 		default:
 			break;
 		}
