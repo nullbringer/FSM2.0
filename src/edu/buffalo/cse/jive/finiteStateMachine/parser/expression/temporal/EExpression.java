@@ -30,8 +30,10 @@ public class EExpression extends UnaryExpression<Expression> {
 
 	@Override
 	public Boolean evaluate(Context context) {
-//		return evaluate2(null, context.getCurrentState(), new HashSet<State>(), context.getStates());
-		return evaluate(null, context.getCurrentState(), context.getStates());
+		
+		if(context.isUseMarker())return evaluate(null, context.getCurrentState(), context.getStates());
+		return evaluate2(null, context.getCurrentState(), new HashSet<State>(), context.getStates());
+		
 	}
 
 	/**
@@ -118,7 +120,6 @@ public class EExpression extends UnaryExpression<Expression> {
 	 * @param states
 	 * @return
 	 */
-	@SuppressWarnings("unused")
 	private Boolean evaluate2(State prev, State curr, Set<State> visited, Map<State, Set<State>> states) {
 		boolean currentResult = true;
 		if (!states.get(curr).isEmpty()) {

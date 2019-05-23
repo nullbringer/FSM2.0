@@ -118,8 +118,10 @@ public abstract class Monitor implements Runnable {
 	 */
 	private boolean validate(State root, List<Expression> expressions) {
 		boolean valid = true;
+		Context thisContext = new Context(root, null, states);
+		if(expressions.get(0) instanceof EExpression)thisContext = new Context(root, null, states,true);
 		for (Expression expression : expressions) {
-			valid = expression.evaluate(new Context(root, null, states)) && valid;
+			valid = expression.evaluate(thisContext) && valid;
 		}
 		
 		return valid;

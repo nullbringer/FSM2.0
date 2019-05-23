@@ -18,12 +18,24 @@ public class Context {
 	private State currentState;
 	private State nextState;
 	private Map<State, Set<State>> states;
+	private boolean useMarker;
 
 	public Context(State currentState, State nextState, Map<State, Set<State>> states) {
 		this.currentState = currentState;
 		this.nextState = nextState;
 		this.states = states;
+		this.useMarker = false;
 	}
+
+	public Context(State currentState, State nextState, Map<State, Set<State>> states, boolean useMarker) {
+		super();
+		this.currentState = currentState;
+		this.nextState = nextState;
+		this.states = states;
+		this.useMarker = useMarker;
+	}
+
+
 
 	public State getCurrentState() {
 		return currentState;
@@ -47,6 +59,15 @@ public class Context {
 
 	public void setStates(Map<State, Set<State>> states) {
 		this.states = states;
+	}
+	
+
+	public boolean isUseMarker() {
+		return useMarker;
+	}
+
+	public void setUseMarker(boolean useMarker) {
+		this.useMarker = useMarker;
 	}
 
 	@Override
