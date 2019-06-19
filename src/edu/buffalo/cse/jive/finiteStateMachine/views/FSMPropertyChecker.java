@@ -63,7 +63,7 @@ import net.sourceforge.plantuml.SourceStringReader;
  * The view of the FSM.
  *
  */
-public class FiniteStateMachine extends ViewPart {
+public class FSMPropertyChecker extends ViewPart {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -110,7 +110,7 @@ public class FiniteStateMachine extends ViewPart {
 	private Label errorText;
 	private Monitor monitor;
 
-	public FiniteStateMachine() {
+	public FSMPropertyChecker() {
 	}
 
 	/**
