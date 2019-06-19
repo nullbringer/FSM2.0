@@ -10,7 +10,7 @@
       </category>
       <view
             id="edu.buffalo.cse.jive.finiteStateMachine.views.FSMPropertyChecker"
-            name="FSM Offline Property Checker"
+            name="Property Checker"
             icon="icons/sample.png"
             class="edu.buffalo.cse.jive.finiteStateMachine.views.FSMPropertyChecker"
             category="Finite_State_Machine_Offline"
@@ -18,7 +18,7 @@
       </view>
       <view
             id="edu.buffalo.cse.jive.finiteStateMachine.views.FSMAbstractionGranularity"
-            name="FSM Offline Abstraction Granularity"
+            name="State Diagram"
             icon="icons/sample.png"
             class="edu.buffalo.cse.jive.finiteStateMachine.views.FSMAbstractionGranularity"
             category="Finite_State_Machine_Offline"
