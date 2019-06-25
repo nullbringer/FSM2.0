@@ -7,6 +7,9 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.Event;
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
+ * 
+ *@author Amlan Gupta
+ *@email amlangup@buffalo.edu
  *
  */
 public class OfflineMonitor extends Monitor {

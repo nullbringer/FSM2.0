@@ -12,6 +12,9 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.ValueExpr
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
  *
+ *@author Amlan Gupta
+ *@email amlangup@buffalo.edu
+ *
  */
 public class Event {
 

@@ -18,6 +18,9 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.EExpre
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
+ * 
+ *@author Amlan Gupta
+ *@email amlangup@buffalo.edu
  *
  */
 public abstract class Monitor implements Runnable {
