@@ -310,12 +310,7 @@ public class FSMAbstractionGranularity extends ViewPart {
 	    browserLData.widthHint = 800; //1000;
 	    browserLData.heightHint = 200; //600;
 	    browser.setLayoutData(browserLData);
-		browser.setText("<html><body>"
-				+ "<h2>Developed by: Swaminathan J</h2>"
-				+ "<h2>Amrita Vishwa Vidyapeetham, India</h2>"
-				+ "<p>For installation and usage instructions, cut-n-paste the following link in the browser.</p>"
-				+ "<p>https://www.amrita.ac.in/swaminathanj/tools/fsme</p>"
-				+ "</body></html>");
+		browser.setText("");
 		
 
 		// Ev2 composite

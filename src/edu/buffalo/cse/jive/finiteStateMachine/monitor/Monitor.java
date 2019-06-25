@@ -1,6 +1,7 @@
 package edu.buffalo.cse.jive.finiteStateMachine.monitor;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,9 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.EExpre
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
+ * 
+ *@author Amlan Gupta
+ *@email amlangup@buffalo.edu
  *
  */
 public abstract class Monitor implements Runnable {
@@ -26,17 +30,22 @@ public abstract class Monitor implements Runnable {
 	private Map<State, Set<State>> states;
 	private State rootState;
 	private State previousState;
+	private boolean shouldConsolidateByMethod;
+	private Map<String, State> consolidatedStateMap;
 
 	/**
 	 * Initializes Key Fields, source, adjacency list and a dummy state
 	 * 
 	 * @param keyFields
 	 * @param source
+	 * @param shouldConsolidateByMethod 
 	 */
-	public Monitor(Set<String> keyFields, BlockingQueue<Event> source) {
+	public Monitor(Set<String> keyFields, BlockingQueue<Event> source, boolean shouldConsolidateByMethod) {
 		this.keyFields = keyFields;
 		this.source = source;
+		this.shouldConsolidateByMethod = shouldConsolidateByMethod;
 		this.states = new HashMap<State, Set<State>>();
+		this.consolidatedStateMap = new LinkedHashMap<String, State>();
 		previousState = new State();
 		for (String field : getKeyFields()) {
 			if (Event.abbreviations.containsKey(field))
@@ -69,6 +78,54 @@ public abstract class Monitor implements Runnable {
 			previousState = newState;
 		}
 		return result;
+	}
+	
+	
+	protected void generateConsolidateEventMap(Event event) {
+		
+		if (keyFields.contains(event.getField()) || keyFields.contains(getEventKey(event.getField()))) {
+			State newState = previousState.copy();
+			newState.getVector().put(event.getField(), event.getValue());
+			consolidatedStateMap.put(event.getMethod(), newState);	
+			previousState = newState;
+		}
+		
+	}
+	
+	
+	protected void buildConsolidatedStates() {
+		
+		this.previousState = new State();
+		for (String field : getKeyFields()) {
+			if (Event.abbreviations.containsKey(field))
+				this.previousState.getVector().put(Event.abbreviations.get(field), null);
+			else
+				this.previousState.getVector().put(field, null);
+		}
+		
+		int stateCount = 0;
+		for(String key:consolidatedStateMap.keySet()) {
+			
+			State newState = consolidatedStateMap.get(key);
+			
+			if(stateCount==0) {
+				states.put(newState, new LinkedHashSet<State>());
+				rootState = newState;
+			}else {
+				states.get(previousState).add(newState);
+				if (!states.containsKey(newState))
+					states.put(newState, new LinkedHashSet<State>());
+				
+			}
+			previousState = newState;
+			stateCount++;
+			
+			
+			
+			
+			
+		}		
+		
 	}
 
 	/**
@@ -171,4 +228,14 @@ public abstract class Monitor implements Runnable {
 	public void setRootState(State rootState) {
 		this.rootState = rootState;
 	}
+
+	public boolean isShouldConsolidateByMethod() {
+		return shouldConsolidateByMethod;
+	}
+
+	public void setShouldConsolidateByMethod(boolean shouldConsolidateByMethod) {
+		this.shouldConsolidateByMethod = shouldConsolidateByMethod;
+	}
+	
+	
 }
