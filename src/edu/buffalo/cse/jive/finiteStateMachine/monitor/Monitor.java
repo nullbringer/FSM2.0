@@ -1,6 +1,7 @@
 package edu.buffalo.cse.jive.finiteStateMachine.monitor;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.State;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State.Status;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.EExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.ValueExpression;
 
 /**
  * @author Shashank Raghunath
@@ -26,17 +28,23 @@ public abstract class Monitor implements Runnable {
 	private Map<State, Set<State>> states;
 	private State rootState;
 	private State previousState;
+	private boolean shouldConsolidateByMethod;
+	private String lastMethod;
+	private Map<String, LinkedHashMap<String, ValueExpression>> eventMap;
 
 	/**
 	 * Initializes Key Fields, source, adjacency list and a dummy state
 	 * 
 	 * @param keyFields
 	 * @param source
+	 * @param shouldConsolidateByMethod 
 	 */
-	public Monitor(Set<String> keyFields, BlockingQueue<Event> source) {
+	public Monitor(Set<String> keyFields, BlockingQueue<Event> source, boolean shouldConsolidateByMethod) {
 		this.keyFields = keyFields;
 		this.source = source;
+		this.shouldConsolidateByMethod = shouldConsolidateByMethod;
 		this.states = new HashMap<State, Set<State>>();
+		this.eventMap = new LinkedHashMap<String, LinkedHashMap<String, ValueExpression>>();
 		previousState = new State();
 		for (String field : getKeyFields()) {
 			if (Event.abbreviations.containsKey(field))
@@ -52,23 +60,48 @@ public abstract class Monitor implements Runnable {
 	 * @param event
 	 * @return
 	 */
-	protected boolean buildStates(Event event) {
-		boolean result = false;
+	protected boolean generateEventMap(Event event) {
+		
 		if (keyFields.contains(event.getField()) || keyFields.contains(getEventKey(event.getField()))) {
-			State newState = previousState.copy();
-			newState.getVector().put(event.getField(), event.getValue());
-			if (!newState.getVector().values().contains(null) && !previousState.getVector().values().contains(null)) {
-				result = states.get(previousState).add(newState);
-				if (!states.containsKey(newState))
-					states.put(newState, new LinkedHashSet<State>());
-			} else if (!newState.getVector().values().contains(null)
-					&& previousState.getVector().values().contains(null)) {
-				states.put(newState, new LinkedHashSet<State>());
-				rootState = newState;
-			}
-			previousState = newState;
+			
+			LinkedHashMap<String, ValueExpression> fieldValueMap = this.eventMap.computeIfAbsent(event.getMethod(), 
+					k -> new LinkedHashMap<String, ValueExpression>());
+			
+			fieldValueMap.put(event.getField(), event.getValue());
+						
 		}
+		return true;
+	}
+	
+	
+	protected boolean buildStates(){
+		
+		boolean result = false;
+		
+		for(String key:this.eventMap.keySet()) {
+			
+			LinkedHashMap<String, ValueExpression> fieldValueMap = this.eventMap.get(key);
+			
+			  for (Map.Entry<String,ValueExpression> entry : fieldValueMap.entrySet()) {
+				  State newState = previousState.copy();
+					newState.getVector().put(entry.getKey(), entry.getValue());
+					if (!newState.getVector().values().contains(null) && !previousState.getVector().values().contains(null)) {
+						result = states.get(previousState).add(newState);
+						if (!states.containsKey(newState))
+							states.put(newState, new LinkedHashSet<State>());
+					} else if (!newState.getVector().values().contains(null)
+							&& previousState.getVector().values().contains(null)) {
+						states.put(newState, new LinkedHashSet<State>());
+						rootState = newState;
+					}
+					previousState = newState;
+					System.out.println(key +" :: "+ newState.toString());
+			  }
+			
+		}
+				
 		return result;
+		
 	}
 
 	/**
