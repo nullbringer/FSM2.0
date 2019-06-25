@@ -17,10 +17,20 @@ public class OfflineMonitor extends Monitor {
 
 	@Override
 	public void run() {
-		for (Event event : getSource()) {
-			generateEventMap(event);
-		}
 		
-		buildStates();
+		if(isShouldConsolidateByMethod()) {
+		
+			for (Event event : getSource()) {
+				generateConsolidateEventMap(event);
+			}
+			buildConsolidatedStates();
+			
+			
+		} else {
+			
+			for (Event event : getSource()) {
+				buildStates(event);
+			}
+		}
 	}
 }

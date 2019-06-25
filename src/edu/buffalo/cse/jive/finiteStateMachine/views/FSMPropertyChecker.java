@@ -109,6 +109,9 @@ public class FSMPropertyChecker extends ViewPart {
 	private TransitionBuilder transitionBuilder;
 	private Label errorText;
 	private Monitor monitor;
+	
+	private Button[] granularity;
+	private Label grLabel;
 
 	public FSMPropertyChecker() {
 	}
@@ -206,6 +209,20 @@ public class FSMPropertyChecker extends ViewPart {
 		Composite grComposite = new Composite(mainComposite, SWT.NONE);
 		grComposite.setLayout(new GridLayout(10, false));
 		grComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		
+				
+		grLabel = new Label(grComposite, SWT.FILL);
+		grLabel.setText("Granularity");
+		
+		granularity = new Button[2];
+		
+		granularity[0] = new Button(grComposite, SWT.RADIO);
+		granularity[0].setSelection(true);
+		granularity[0].setText("Field");
+		
+		granularity[1] = new Button(grComposite, SWT.RADIO);
+		granularity[1].setSelection(false);
+		granularity[1].setText("Method");
 
 		// Predicate abstraction composite
 		Composite paComposite = new Composite(mainComposite, SWT.NONE);
@@ -408,7 +425,7 @@ public class FSMPropertyChecker extends ViewPart {
 				e3.printStackTrace();
 			}
 			if (expressions != null && expressions.size() > 0) {
-				monitor = new OfflineMonitor(keyAttributes, incomingEvents);
+				monitor = new OfflineMonitor(keyAttributes, incomingEvents, granularity[1].getSelection());
 				monitor.run();
 				if (monitor.validate(expressions)) {
 					errorText.setText("All properties satisfied.                                 ");
@@ -527,7 +544,7 @@ public class FSMPropertyChecker extends ViewPart {
 		errorText.setText("                                                                ");
 		try {
 			Set<String> keyAttributes = readKeyAttributes(kvText, paText);
-			monitor = new OfflineMonitor(keyAttributes, incomingEvents);
+			monitor = new OfflineMonitor(keyAttributes, incomingEvents, granularity[1].getSelection());
 			monitor.run();
 			transitionBuilder = new TransitionBuilder(monitor.getRootState(), monitor.getStates());
 			transitionBuilder.build();

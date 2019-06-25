@@ -17,6 +17,7 @@ public class Event {
 
 	private String field;
 	private ValueExpression value;
+	private String method;
 	public static Map<String, String> abbreviations = new HashMap<>();
 
 	/**
@@ -39,6 +40,20 @@ public class Event {
 			}
 		}
 	}
+	
+	public Event(String field, String value, String method) {
+		this.field = field;
+		this.method = method;
+		try {
+			this.value = new IntegerValueExpression(Integer.parseInt(value));
+		} catch (NumberFormatException e) {
+			try {
+				this.value = new DoubleValueExpression(Double.parseDouble(value));
+			} catch (NumberFormatException e2) {
+				this.value = new StringValueExpression(value);
+			}
+		}
+	}
 
 	public String getField() {
 		if (abbreviations.containsKey(this.field)) {
@@ -51,6 +66,10 @@ public class Event {
 		return this.value;
 	}
 
+	public String getMethod() {
+		return method;
+	}
+	
 	@Override
 	public String toString() {
 		return field + " " + value;
