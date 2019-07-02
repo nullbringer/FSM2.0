@@ -12,7 +12,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.Event;
 public class OnlineMonitor extends Monitor {
 
 	public OnlineMonitor(Set<String> keyFields, BlockingQueue<Event> source) {
-		super(keyFields, source);
+		super(keyFields, source, false);
 	}
 
 	@Override

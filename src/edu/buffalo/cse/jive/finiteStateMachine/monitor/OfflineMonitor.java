@@ -7,18 +7,33 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.Event;
 /**
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
+ * 
+ *@author Amlan Gupta
+ *@email amlangup@buffalo.edu
  *
  */
 public class OfflineMonitor extends Monitor {
 
-	public OfflineMonitor(Set<String> keyFields, BlockingQueue<Event> source) {
-		super(keyFields, source);
+	public OfflineMonitor(Set<String> keyFields, BlockingQueue<Event> source, boolean shouldConsolidateByMethod) {
+		super(keyFields, source, shouldConsolidateByMethod);
 	}
 
 	@Override
 	public void run() {
-		for (Event event : getSource()) {
-			buildStates(event);
+		
+		if(isShouldConsolidateByMethod()) {
+		
+			for (Event event : getSource()) {
+				generateConsolidateEventMap(event);
+			}
+			buildConsolidatedStates();
+			
+			
+		} else {
+			
+			for (Event event : getSource()) {
+				buildStates(event);
+			}
 		}
 	}
 }
