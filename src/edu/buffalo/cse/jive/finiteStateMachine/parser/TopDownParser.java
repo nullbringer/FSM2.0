@@ -102,6 +102,7 @@ class Imply {
 	private Expression expression;
 
 	public Imply(Lexer lexer) throws Exception {
+		// implication expression
 		Or e1, e2;
 		e1 = new Or(lexer);
 		expression = e1.getExpression();
