@@ -56,6 +56,9 @@ public class Lexer {
 			case "X":
 				nextToken = Token.X_OP;
 				break;
+			case "P":
+				nextToken = Token.P_OP;
+				break;
 			case "end":
 				nextToken = Token.KEY_END;
 				break;
@@ -169,6 +172,20 @@ public class Lexer {
 					ch = buffer.getChar();
 				} else
 					nextToken = Token.NOT_OP;
+				break;
+			case '~':
+				ch = buffer.getChar();
+				if (ch == '>') {
+					nextToken = Token.LEADS_TO;
+					ch = buffer.getChar();
+				} else
+					if (ch == '~') {
+						ch = buffer.getChar();
+						//if (ch == '>') {
+							nextToken = Token.ALWAYS_LEADS_TO;
+							ch = buffer.getChar();
+						//} 
+					} 
 				break;
 			case '(':
 				nextToken = Token.LEFT_PAREN;

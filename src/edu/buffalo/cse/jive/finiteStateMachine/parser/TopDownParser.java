@@ -48,12 +48,11 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.ValueExpr
  * 
  * @author Shashank Raghunath
  * @email sraghuna@buffalo.edu
- *
+ * 
+ * @author Saurabh Pansare
+ * @email sppansar@buffalo.edu
  */
-/**
- * TopDownParser - Ask the Professor about this.
- *
- */
+
 public class TopDownParser implements Parser {
 
 	@Override
@@ -130,6 +129,7 @@ class Or {
 		And t;
 		Or e;
 		t = new And(lexer);
+		
 		expression = t.getExpression();
 		if (lexer.getNextToken() == Token.OR_OP) {
 			lexer.lex();
@@ -165,7 +165,7 @@ class And {
 			if (f.getExpression() == null || t.getExpression() == null)
 				throw new IllegalArgumentException("Syntax Error in Properties");
 			expression = new AndExpression(f.getExpression(), t.getExpression());
-		}
+		} 		
 	}
 
 	public Expression getExpression() {
@@ -262,6 +262,40 @@ class BF {
 			lexer.lex(); // skip over ]
 			expression = new EExpression(e.getExpression());
 			break;
+		case Token.P_OP: // P is the path operator
+			lexer.lex(); // skip over 'P'
+			if (lexer.getNextToken() != Token.LEFT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
+			lexer.lex(); // skip over [
+			e = new Imply(lexer);
+			if (lexer.getNextToken() == Token.LEADS_TO)  {
+				lexer.lex();
+				Imply e2 = new Imply(lexer);
+				if (e2.getExpression() == null || e.getExpression() == null)
+					throw new IllegalArgumentException("Syntax Error in Properties");
+				if (lexer.getNextToken() == Token.LEADS_TO) {
+					lexer.lex();
+					Imply e3 = new Imply(lexer);
+					if (e3.getExpression() == null)
+						throw new IllegalArgumentException("Syntax Error in Properties");
+					else
+						expression = new EExpression(new AndExpression(e.getExpression(), 
+																	   new EExpression(new AndExpression(e2.getExpression(), new EExpression(e3.getExpression())))));
+				}
+				else expression = new EExpression(new AndExpression(e.getExpression(), new EExpression(e2.getExpression())));
+				     // p ~> q is equivalent to E [p && E[q] ]
+				     // p ~> q ~> r is eqvt to E [p && E[q && E[r]]]
+			}
+			else {
+				//  We must have lexer.getNextToken() == Token.ALWAYS_LEADS_TO)
+				//  To be completed
+		    }
+			
+			if (lexer.getNextToken() != Token.RIGHT_BOX)
+				throw new IllegalArgumentException("Syntax Error in Properties");
+			lexer.lex(); // skip over ]
+			break;
+			
 		default:
 			throw new IllegalArgumentException("Syntax Error in Properties");
 		}
