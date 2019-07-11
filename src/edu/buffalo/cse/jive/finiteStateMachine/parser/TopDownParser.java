@@ -34,6 +34,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.relational.NotE
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.EExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.FExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.GExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.PExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.UExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.XExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.DoubleValueExpression;
@@ -268,27 +269,44 @@ class BF {
 				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over [
 			e = new Imply(lexer);
-			if (lexer.getNextToken() == Token.LEADS_TO)  {
+			// We only consider p ~> q ~> r and
+			// also p ~~> q ~~> r
+			// but not mixed ~> and ~~>
+			if (lexer.getNextToken() == Token.LEADS_TO)  {   // single squiggly cases: 1 and 2
 				lexer.lex();
 				Imply e2 = new Imply(lexer);
 				if (e2.getExpression() == null || e.getExpression() == null)
 					throw new IllegalArgumentException("Syntax Error in Properties");
+				else 
+					expression = new PExpression(1, e.getExpression(), e2.getExpression(), null);
 				if (lexer.getNextToken() == Token.LEADS_TO) {
 					lexer.lex();
 					Imply e3 = new Imply(lexer);
 					if (e3.getExpression() == null)
 						throw new IllegalArgumentException("Syntax Error in Properties");
 					else
-						expression = new EExpression(new AndExpression(e.getExpression(), 
-																	   new EExpression(new AndExpression(e2.getExpression(), new EExpression(e3.getExpression())))));
+					expression = new PExpression(2, e.getExpression(),e2.getExpression(), e3.getExpression());
 				}
-				else expression = new EExpression(new AndExpression(e.getExpression(), new EExpression(e2.getExpression())));
-				     // p ~> q is equivalent to E [p && E[q] ]
-				     // p ~> q ~> r is eqvt to E [p && E[q && E[r]]]
 			}
-			else {
-				//  We must have lexer.getNextToken() == Token.ALWAYS_LEADS_TO)
-				//  To be completed
+			else {	// double squiggly cases: 3 and 4
+				if (lexer.getNextToken() == Token.ALWAYS_LEADS_TO) {
+					lexer.lex();
+					Imply e2 = new Imply(lexer);
+					if (e2.getExpression() == null || e.getExpression() == null)
+						throw new IllegalArgumentException("Syntax Error in Properties");
+					else 
+						expression = new PExpression(3, e.getExpression(), e2.getExpression(), null);
+					if (lexer.getNextToken() == Token.ALWAYS_LEADS_TO) {
+						lexer.lex();
+						Imply e3 = new Imply(lexer);
+						if (e3.getExpression() == null)
+							throw new IllegalArgumentException("Syntax Error in Properties");
+						else
+						expression = new PExpression(4, e.getExpression(),e2.getExpression(), e3.getExpression());
+					}
+				}
+				else
+					throw new IllegalArgumentException("Syntax Error in P Operator");
 		    }
 			
 			if (lexer.getNextToken() != Token.RIGHT_BOX)
