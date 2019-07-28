@@ -49,13 +49,17 @@ class Token {
 	public static final int MIN_OP=38;
 	public static final int MAX_OP=39;
 	public static final int HASH_OP=40;
+	public static final int LEADS_TO = 41;
+	public static final int ALWAYS_LEADS_TO = 42;
+	public static final int P_OP = 43;
 	
 
 	private static String[] lexemes = { ";", ",", "+", "-", "*", "/", "=", ">", "<", "<=", ">=", "==", "!=", "(", ")",
-			"{", "}", "id", "int_lit", "&&", "||", "->", "F", "G", "U", "X", "[", "]", "!", "end", "'" };
+			"{", "}", "id", "int_lit", "&&", "||", "->", "F", "G", "U", "X", "[", "]", "!", "end", "'",
+			"n_int_lit", "string_lit", "E", "in", ".", "++", "size", "min", "max", "hash", "~>", "~~>", "P"};
 
 	public static String toString(int i) {
-		if (i < 0 || i > 30)
+		if (i < 0 || i > 43)
 			return "";
 		else
 			return lexemes[i];
