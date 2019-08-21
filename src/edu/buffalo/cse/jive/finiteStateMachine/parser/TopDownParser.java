@@ -293,7 +293,7 @@ class BF {
 				Imply e2 = new Imply(lexer);
 				if (e2.getExpression() == null || e.getExpression() == null)
 					throw new IllegalArgumentException("Syntax Error in Properties");
-				if (lexer.getNextToken() == Token.LEADS_TO) {
+				if (lexer.getNextToken() == Token.ALWAYS_LEADS_TO) {
 					lexer.lex();
 					Imply e3 = new Imply(lexer);
 					if (e3.getExpression() == null)
