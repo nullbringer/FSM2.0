@@ -288,7 +288,21 @@ class BF {
 			}
 			else {
 				//  We must have lexer.getNextToken() == Token.ALWAYS_LEADS_TO)
-				//  To be completed
+				
+				lexer.lex();
+				Imply e2 = new Imply(lexer);
+				if (e2.getExpression() == null || e.getExpression() == null)
+					throw new IllegalArgumentException("Syntax Error in Properties");
+				if (lexer.getNextToken() == Token.ALWAYS_LEADS_TO) {
+					lexer.lex();
+					Imply e3 = new Imply(lexer);
+					if (e3.getExpression() == null)
+						throw new IllegalArgumentException("Syntax Error in Properties");
+					else
+						expression = new FExpression(new AndExpression(e.getExpression(), 
+																	   new FExpression(new AndExpression(e2.getExpression(), new FExpression(e3.getExpression())))));
+				}
+				else expression = new FExpression(new AndExpression(e.getExpression(), new FExpression(e2.getExpression())));
 		    }
 			
 			if (lexer.getNextToken() != Token.RIGHT_BOX)
