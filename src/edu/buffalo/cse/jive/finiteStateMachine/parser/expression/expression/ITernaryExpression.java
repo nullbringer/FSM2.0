@@ -4,7 +4,7 @@ package edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression;
  * @email amlangup@buffalo.edu
  *
  */
-public interface ITrinaryExpression<T extends Expression, V extends Expression, K extends Expression> {
+public interface ITernaryExpression<T extends Expression, V extends Expression, K extends Expression> {
 
 	public T getExpressionA();
 

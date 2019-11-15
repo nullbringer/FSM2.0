@@ -4,14 +4,14 @@ package edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression;
  * @email amlangup@buffalo.edu
  *
  */
-public abstract class TrinaryExpression<T extends Expression, V extends Expression, K extends Expression> extends Expression
-		implements ITrinaryExpression<T, V, K> {
+public abstract class TernaryExpression<T extends Expression, V extends Expression, K extends Expression> extends Expression
+		implements ITernaryExpression<T, V, K> {
 
 	private T expressionA;
 	private T expressionB;
 	private T expressionC;
 
-	public TrinaryExpression(T expressionA, T expressionB, T expressionC) {
+	public TernaryExpression(T expressionA, T expressionB, T expressionC) {
 		super();
 		this.expressionA = expressionA;
 		this.expressionB = expressionB;

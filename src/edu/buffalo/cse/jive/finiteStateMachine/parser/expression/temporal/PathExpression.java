@@ -10,7 +10,7 @@ import java.util.Stack;
 import edu.buffalo.cse.jive.finiteStateMachine.models.Context;
 import edu.buffalo.cse.jive.finiteStateMachine.models.State;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
-import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.TrinaryExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.TernaryExpression;
 
 /**
  * 
@@ -18,7 +18,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Trin
  *@email amlangup@buffalo.edu
  *
  */
-public class PathExpression extends TrinaryExpression<Expression, Expression, Expression> {
+public class PathExpression extends TernaryExpression<Expression, Expression, Expression> {
 
 	public PathExpression(Expression expressionA, Expression expressionB, Expression expressionC) {
 		super(expressionA, expressionB, expressionC);
