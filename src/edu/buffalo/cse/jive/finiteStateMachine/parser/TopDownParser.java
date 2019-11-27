@@ -34,6 +34,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.relational.NotE
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.EExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.FExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.GExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.PathExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.UExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.temporal.XExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.DoubleValueExpression;
@@ -299,8 +300,7 @@ class BF {
 					if (e3.getExpression() == null)
 						throw new IllegalArgumentException("Syntax Error in Properties");
 					else
-						expression = new FExpression(new AndExpression(e.getExpression(), 
-																	   new FExpression(new AndExpression(e2.getExpression(), new FExpression(e3.getExpression())))));
+						expression = new PathExpression(e.getExpression(), e2.getExpression(), e3.getExpression());
 				}
 				else expression = new FExpression(new AndExpression(e.getExpression(), new FExpression(e2.getExpression())));
 		    }
