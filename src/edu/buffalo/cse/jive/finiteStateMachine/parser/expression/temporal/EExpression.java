@@ -54,24 +54,35 @@ public class EExpression extends UnaryExpression<Expression> {
 		boolean currentResult = false;
 		Queue<State> toBeVisited = new LinkedList<State>();
 		Stack<State> visited = new Stack<State>();
-		toBeVisited.add(rootState);
-		visited.add(rootState);
 		State targetState = new State();
-		while(!toBeVisited.isEmpty()){
-			State curr = toBeVisited.poll();
-			for (State next : states.get(curr)){
-				if(!visited.contains(next)) {
-					boolean isMatch = getExpression().evaluate(new Context(next, null, states));
-					if(isMatch) {
-						targetState = next;
-						currentResult = true;
-						break;	
+		
+		//check if rootstate is match
+		boolean isMatch = getExpression().evaluate(new Context(rootState, null, states));
+		if(isMatch) {
+			targetState = rootState;
+			currentResult = true;
+		}
+		
+		if(!currentResult) {
+			toBeVisited.add(rootState);
+			visited.add(rootState);
+			
+			while(!toBeVisited.isEmpty()){
+				State curr = toBeVisited.poll();
+				for (State next : states.get(curr)){
+					if(!visited.contains(next)) {
+						isMatch = getExpression().evaluate(new Context(next, null, states));
+						if(isMatch) {
+							targetState = next;
+							currentResult = true;
+							break;	
+						}
+						visited.push(next);
+						toBeVisited.add(next);
 					}
-					visited.push(next);
-					toBeVisited.add(next);
-				}
-			}	
-			if(currentResult)break;
+				}	
+				if(currentResult)break;
+			}
 		}
 		
 		if(!currentResult) return currentResult;	
