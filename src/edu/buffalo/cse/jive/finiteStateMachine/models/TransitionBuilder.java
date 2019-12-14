@@ -8,7 +8,7 @@ import java.util.Set;
 
 import edu.buffalo.cse.jive.finiteStateMachine.models.State.Status;
 import edu.buffalo.cse.jive.finiteStateMachine.util.Pair;
-import edu.buffalo.cse.jive.finiteStateMachine.util.ShortestPathHolderForEExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.util.TemporaryDataTransporter;
 
 /**
  * @author Shashank Raghunath
@@ -73,10 +73,11 @@ public class TransitionBuilder {
 		Pair<State, State> pair = new Pair<State, State>(state1, state2);
 		
 		String s = "\"" + state1.toString() + "\"";
-		if(ShortestPathHolderForEExpression.getPath().contains(pair)) 
+		if(TemporaryDataTransporter.getPath().contains(pair)) 
 			s+= " -[#" + arrowColor + "]-> ";
 		else s += " --> ";
-		s += "\"" + state2.toString() + "\"" + " #" + backgroundColor;
+		s += "\"" + state2.toString() + "\"";
+		if(backgroundColor.length()>0)s+= " #" + backgroundColor;
 		this.transitions.append(s);
 		addNewLine();
 	}
@@ -101,8 +102,8 @@ public class TransitionBuilder {
 			State curr = toBeVisited.poll();
 			for (State next : states.get(curr)){
 				if (traversedPath.add(new Pair<State, State>(curr, next))) {
-					if(next.getStatus().equals(Status.MARKED))
-						addColorTransitionWithArrowBetweenSameStates(curr,next, "LimeGreen","green");
+					if(next.getStatus().equals(Status.MARKED) && TemporaryDataTransporter.shouldHighlight)
+							addColorTransitionWithArrowBetweenSameStates(curr,next, "LimeGreen","green");
 					else 
 						addTransition(curr, next, next.getStatus());
 					if(visited.add(next))toBeVisited.add(next);

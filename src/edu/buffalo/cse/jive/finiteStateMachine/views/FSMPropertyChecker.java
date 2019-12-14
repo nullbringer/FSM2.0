@@ -52,6 +52,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.monitor.OfflineMonitor;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.Parser;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.TopDownParser;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
+import edu.buffalo.cse.jive.finiteStateMachine.util.TemporaryDataTransporter;
 import net.sourceforge.plantuml.SourceStringReader;
 
 /**
@@ -416,6 +417,7 @@ public class FSMPropertyChecker extends ViewPart {
 	private void validateButtonAction(SelectionEvent e) {
 		errorText.setText("                                                                ");
 		try {
+			TemporaryDataTransporter.shouldHighlight = false;
 			Set<String> keyAttributes = readKeyAttributes(kvText, paText);
 			List<Expression> expressions = null;
 			try {
