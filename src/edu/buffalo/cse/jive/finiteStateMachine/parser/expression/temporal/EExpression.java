@@ -15,7 +15,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.models.State.Status;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.Expression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.expression.UnaryExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.util.Pair;
-import edu.buffalo.cse.jive.finiteStateMachine.util.ShortestPathHolderForEExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.util.TemporaryDataTransporter;
 
 /**
  * @author Shashank Raghunath
@@ -101,14 +101,19 @@ public class EExpression extends UnaryExpression<Expression> {
 			}
 		}
 		
-		ShortestPathHolderForEExpression.setPath(pathPairs);
+		TemporaryDataTransporter.setPath(pathPairs);
 		
 		return shortestPathList;
 	}
 	private void markStatesInPath(List<State> shortestPathList, Map<State, Set<State>> states) {
 		for (Set<State> childList : states.values()) {
 		    for(State state:childList) {
-		    	if(shortestPathList.contains(state))state.setStatus(Status.MARKED);
+		    	if(shortestPathList.contains(state)) {
+		    		if(TemporaryDataTransporter.shouldHighlight)
+		    			state.setStatus(Status.MARKED);
+		    		else 
+		    			state.setStatus(Status.VALID);
+		    	}
 		    }
 		}
 	}

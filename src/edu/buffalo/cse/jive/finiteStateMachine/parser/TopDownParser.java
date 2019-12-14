@@ -42,6 +42,7 @@ import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.IntegerVa
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.ListValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.StringValueExpression;
 import edu.buffalo.cse.jive.finiteStateMachine.parser.expression.value.ValueExpression;
+import edu.buffalo.cse.jive.finiteStateMachine.util.TemporaryDataTransporter;
 
 /**
  * @author Bharat Jayaraman
@@ -262,6 +263,7 @@ class BF {
 				throw new IllegalArgumentException("Syntax Error in Properties");
 			lexer.lex(); // skip over ]
 			expression = new EExpression(e.getExpression());
+			TemporaryDataTransporter.shouldHighlight = true;
 			break;
 		case Token.P_OP: // P is the path operator
 			lexer.lex(); // skip over 'P'
