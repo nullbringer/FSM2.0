@@ -39,6 +39,8 @@ public class TransitionBuilder {
 	private void addInitialState(State state, Status status) {
 		if (status.equals(Status.VALID))
 			this.transitions.append("(*) --> " + "\"" + state.toString() + "\"");
+		else if(status.equals(Status.MARKED))
+		this.transitions.append("(*) --> " + "\"" + state.toString() + "\"" + " #LimeGreen");
 		else
 			this.transitions.append("(*) --> " + "\"" + state.toString() + "\"" + " #red");
 		addNewLine();
